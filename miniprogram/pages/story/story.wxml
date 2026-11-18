@@ -1,0 +1,26 @@
+<view class="page" wx:if="{{story}}">
+  <view class="col" style="gap:12rpx">
+    <view class="mut">{{story.kind}}</view>
+    <view class="h" style="font-size:34rpx;line-height:1.5">{{story.title}}</view>
+    <view class="mut">{{story.meta}}</view>
+  </view>
+  <view class="quote">{{story.quote}}</view>
+  <view class="col" style="gap:20rpx">
+    <view wx:for="{{story.body}}" wx:key="*this" class="para">{{item}}</view>
+  </view>
+  <view class="card col">
+    <view class="sub" style="font-weight:700;color:#22333B">这段经历里，帮到我的事</view>
+    <view wx:for="{{story.helped}}" wx:key="*this" class="li">
+      <view class="dot"></view><text>{{item}}</text>
+    </view>
+  </view>
+  <view class="card col">
+    <view class="sub" style="font-weight:700;color:#22333B">报道来源</view>
+    <view wx:for="{{story.sources}}" wx:key="url" class="col" style="gap:4rpx">
+      <button class="src" style="text-align:left" data-url="{{item.url}}" bindtap="onSource">{{item.label}}</button>
+    </view>
+    <view class="mut">点击可复制原文链接。案例根据公开报道整理，不构成医疗建议；康复请遵医嘱。</view>
+  </view>
+  <button class="btn quiet" bindtap="goJournal">看完想记一笔？去记录</button>
+</view>
+<view wx:else class="page"><view class="mut center">没有找到这个故事</view></view>

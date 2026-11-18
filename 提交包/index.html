@@ -1,0 +1,1354 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>心里韧带</title>
+<style>
+:root{
+  --brand:#2F9E8F; --brand-deep:#22806F; --brand-soft:#EAF6F3;
+  --bg:#F6F4EF; --card:#FFFFFF; --ink:#22333B; --sub:#51666F; --mut:#8A9BA3;
+  --line:#E5E1D8; --warm:#E9A23B; --green:#3BA55D; --blue:#7BA7C9; --gray:#9AA7AD; --lgreen:#8FCB9B;
+  --danger:#D64545; --danger-bg:#FBEDED; --warn:#B97D10; --warn-bg:#FBF3E9;
+}
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.6 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+#app{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:var(--bg)}
+button{font:inherit;color:inherit}
+.nav{position:relative;flex:0 0 48px;display:flex;align-items:center;justify-content:center;background:var(--card);border-bottom:1px solid var(--line)}
+.nav h1{font-size:16px;font-weight:600;margin:0;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav .back{position:absolute;left:6px;top:8px;width:32px;height:32px;border:none;background:none;border-radius:999px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--sub)}
+.nav .capsule{position:absolute;right:10px;display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:3px 9px;color:var(--ink)}
+.nav .capsule .div{width:1px;height:14px;background:var(--line)}
+main{flex:1;overflow-y:auto;padding:14px 14px 20px;display:flex;flex-direction:column;gap:12px;-webkit-overflow-scrolling:touch}
+.tabbar{flex:0 0 auto;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.tabbar button{flex:1;border:none;background:none;padding:8px 0 9px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--mut);cursor:pointer}
+.tabbar button.on{color:var(--brand);font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.col{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;align-items:center;gap:8px}
+.between{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.h{font-size:15px;font-weight:700}
+.sub{font-size:12px;color:var(--sub)}
+.mut{font-size:11px;color:var(--mut)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mod{ text-align:left;display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--card);cursor:pointer}
+.mod .ic{color:var(--brand)}
+.btn{border:none;border-radius:999px;padding:11px 16px;font-size:13px;font-weight:600;cursor:pointer;background:var(--brand);color:#fff}
+.btn.quiet{background:#EFECE4;color:var(--ink)}
+.btn.danger{background:var(--danger)}
+.btn:disabled{opacity:.5;cursor:default}
+.chip{border-radius:999px;border:1px solid var(--line);padding:6px 14px;font-size:12px;cursor:pointer;background:none;color:var(--sub)}
+.chip.on{background:var(--brand-soft);border-color:var(--brand);color:var(--brand-deep);font-weight:600}
+.opt{width:100%;text-align:left;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:13px;cursor:pointer;background:var(--card)}
+.quote{border-left:3px solid var(--brand);border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.7;background:#F4F1EA;color:var(--sub)}
+.li{display:flex;gap:8px;font-size:12px;line-height:1.6;color:var(--sub)}
+.li .dot{flex:0 0 5px;width:5px;height:5px;border-radius:999px;margin-top:7px;background:var(--brand)}
+.moods{display:flex;justify-content:space-between}
+.moods button{display:flex;flex-direction:column;align-items:center;gap:4px;border:none;background:none;padding:4px 2px;cursor:pointer;font-size:11px;color:var(--mut);border-radius:10px}
+.moods button.sel{outline:2px solid currentColor}
+input[type=range]{width:100%;accent-color:var(--brand)}
+textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:12px;background:#FAF8F3;color:var(--ink);resize:none}
+.pbar{height:4px;border-radius:999px;background:#EFECE4}
+.pbar>div{height:4px;border-radius:999px;background:var(--brand)}
+.storybtn{ text-align:left;cursor:pointer;gap:6px}
+.fade{animation:fade .18s ease-out}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.fade{animation:none}}
+.ok{color:var(--green);font-size:11px}
+svg{display:block}
+.para{font-size:13px;line-height:1.85;color:var(--sub)}
+.src{font-size:11px;color:var(--brand-deep);text-decoration:none;word-break:break-all}
+.src:hover{text-decoration:underline}
+.bubble{border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.7;max-width:94%;display:flex;flex-direction:column;gap:6px}
+.bubble.user{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:4px}
+.bubble.bot{align-self:flex-start;background:#F4F1EA;color:var(--ink);border-bottom-left-radius:4px}
+.chatq{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.chatq .chip{flex:0 0 auto;white-space:nowrap;background:var(--card)}
+.composer{position:sticky;bottom:0;display:flex;gap:8px;background:var(--bg);padding:8px 0 2px;z-index:2}
+.composer input{flex:1;min-width:0;border:1px solid var(--line);border-radius:999px;padding:10px 14px;font:inherit;font-size:13px;background:var(--card);color:var(--ink)}
+.composer .btn{padding:10px 18px;flex:0 0 auto}
+.typing{color:var(--mut);font-size:12px;padding:2px}
+.videobox{position:relative;width:100%;padding-top:62%;background:#111;border-radius:12px;overflow:hidden}
+.videobox iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="nav" id="nav"></div>
+  <main id="main"></main>
+  <div class="tabbar" id="tabbar"></div>
+</div>
+<script>
+/* 本机演示后端（由 dev/build-submission.mjs 注入，非真实服务） */
+/*
+ * 本机演示后端（只注入「提交包」这份副本，Sites 生产副本不含此文件）。
+ *
+ * 用途：没有站点 Function 时（评委在本地双击打开 HTML，或静态托管），
+ * 用 localStorage 复刻 /api/... 的响应形状与错误码，让注册、登录、游客、
+ * 管理员看板仍然可以真的点通。
+ *
+ * 明确的边界：数据只存在当前浏览器；不做限流；密码只存加盐摘要（真实后端是
+ * 15 万轮 PBKDF2），所以横幅里要求使用者不要输入真实密码。
+ */
+(function () {
+  "use strict";
+
+  var KEY = "xinli.demo.v1";
+  var HOUR = 3600000, DAY = 24 * HOUR;
+  var USER_MIN = 10, ADMIN_MIN = 15, MAX_BYTES = 256;
+  var LABELS = ["家长", "老师", "教练", "其它"];
+  var LIST_BOUND = 500, PAGE_LIMIT = 200;
+
+  var K = [
+    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+    0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+    0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+    0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+    0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+  ];
+
+  function rotr(value, shift) { return ((value >>> shift) | (value << (32 - shift))) >>> 0; }
+
+  function sha256(bytes) {
+    var h = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+    var len = bytes.length;
+    var total = (Math.floor((len + 8) / 64) + 1) * 64;
+    var msg = new Uint8Array(total);
+    msg.set(bytes);
+    msg[len] = 0x80;
+    var bits = len * 8;
+    var hi = Math.floor(bits / 4294967296), lo = bits % 4294967296;
+    msg[total - 8] = (hi >>> 24) & 255; msg[total - 7] = (hi >>> 16) & 255;
+    msg[total - 6] = (hi >>> 8) & 255; msg[total - 5] = hi & 255;
+    msg[total - 4] = (lo >>> 24) & 255; msg[total - 3] = (lo >>> 16) & 255;
+    msg[total - 2] = (lo >>> 8) & 255; msg[total - 1] = lo & 255;
+
+    var w = new Uint32Array(64);
+    var i, block;
+    for (block = 0; block < total; block += 64) {
+      for (i = 0; i < 16; i++) {
+        var o = block + i * 4;
+        w[i] = ((msg[o] << 24) | (msg[o + 1] << 16) | (msg[o + 2] << 8) | msg[o + 3]) >>> 0;
+      }
+      for (i = 16; i < 64; i++) {
+        var x = w[i - 15], y = w[i - 2];
+        var s0 = rotr(x, 7) ^ rotr(x, 18) ^ (x >>> 3);
+        var s1 = rotr(y, 17) ^ rotr(y, 19) ^ (y >>> 10);
+        w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0;
+      }
+      var a = h[0], b = h[1], c = h[2], d = h[3], e = h[4], f = h[5], g = h[6], hh = h[7];
+      for (i = 0; i < 64; i++) {
+        var S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+        var t1 = (hh + S1 + ((e & f) ^ (~e & g)) + K[i] + w[i]) >>> 0;
+        var S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+        var t2 = (S0 + ((a & b) ^ (a & c) ^ (b & c))) >>> 0;
+        hh = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+      }
+      h[0] = (h[0] + a) >>> 0; h[1] = (h[1] + b) >>> 0; h[2] = (h[2] + c) >>> 0; h[3] = (h[3] + d) >>> 0;
+      h[4] = (h[4] + e) >>> 0; h[5] = (h[5] + f) >>> 0; h[6] = (h[6] + g) >>> 0; h[7] = (h[7] + hh) >>> 0;
+    }
+    var out = [];
+    for (i = 0; i < 8; i++) out.push((h[i] >>> 24) & 255, (h[i] >>> 16) & 255, (h[i] >>> 8) & 255, h[i] & 255);
+    return new Uint8Array(out);
+  }
+
+  function utf8(text) { return new TextEncoder().encode(text); }
+
+  function toHex(bytes) {
+    var s = "";
+    for (var i = 0; i < bytes.length; i++) s += ("0" + bytes[i].toString(16)).slice(-2);
+    return s;
+  }
+
+  // 演示只需要「读不回明文」：真实后端用 15 万轮 PBKDF2，这里 2000 轮摘要足够跑通流程。
+  function derive(password, salt) {
+    var acc = sha256(utf8(salt + "|" + password));
+    for (var i = 0; i < 2000; i++) acc = sha256(utf8(toHex(acc) + salt));
+    return toHex(acc);
+  }
+
+  function randHex(n) {
+    var out = "";
+    for (var i = 0; i < n; i++) out += ("0" + ((Math.random() * 256) | 0).toString(16)).slice(-2);
+    return out;
+  }
+
+  function uid() { return "d" + Date.now().toString(36) + randHex(6); }
+  function nowIso() { return new Date().toISOString(); }
+
+  function byteLen(text) {
+    try { return utf8(text).length; } catch (e) { return String(text).length; }
+  }
+
+  function fail(code, status) { return { __fail: true, code: code, status: status }; }
+
+  function canonicalUsername(raw) {
+    if (typeof raw !== "string") return fail("invalid_username", 400);
+    var value = raw.trim().toLowerCase();
+    if (value.length < 3 || value.length > 32) return fail("invalid_username", 400);
+    if (!/^[a-z0-9][a-z0-9_-]*$/.test(value)) return fail("invalid_username", 400);
+    return value;
+  }
+
+  function checkPassword(raw, min) {
+    if (typeof raw !== "string") return fail("invalid_password", 400);
+    if (Array.from(raw).length < min) return fail("password_too_short", 400);
+    if (byteLen(raw) > MAX_BYTES) return fail("invalid_password", 400);
+    return raw;
+  }
+
+  function checkLabel(raw) {
+    if (raw === undefined || raw === null || raw === "") return "其它";
+    if (typeof raw !== "string") return fail("invalid_input", 400);
+    var value = raw.trim();
+    return LABELS.indexOf(value) < 0 ? fail("invalid_input", 400) : value;
+  }
+
+  function checkLoginPassword(raw) {
+    if (typeof raw !== "string") return fail("invalid_credentials", 400);
+    if (byteLen(raw) > MAX_BYTES) return fail("invalid_credentials", 400);
+    return raw;
+  }
+
+  function fresh() {
+    return { users: [], guests: [], events: [], me: { user: null, admin: null, guest: null }, samples: false };
+  }
+
+  var db = null;
+
+  function load() {
+    var base = fresh();
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return base;
+      var parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed.users)) return base;
+      base.users = parsed.users;
+      base.guests = Array.isArray(parsed.guests) ? parsed.guests : [];
+      base.events = Array.isArray(parsed.events) ? parsed.events : [];
+      if (parsed.me) {
+        base.me.user = parsed.me.user || null;
+        base.me.admin = parsed.me.admin || null;
+        base.me.guest = parsed.me.guest || null;
+      }
+      base.samples = !!parsed.samples;
+      return base;
+    } catch (e) { return base; }
+  }
+
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(db)); return true; } catch (e) { return false; }
+  }
+
+  function publicUser(row) {
+    return {
+      username: row.username,
+      role: row.role === "admin" ? "admin" : "user",
+      role_label: typeof row.display_name === "string" ? row.display_name : "其它",
+      created_at: row.created_at,
+      last_login_at: row.last_login_at || null,
+      login_count: row.login_count || 0
+    };
+  }
+
+  function find(name) {
+    for (var i = 0; i < db.users.length; i++) if (db.users[i].username === name) return db.users[i];
+    return null;
+  }
+
+  function findById(id) {
+    for (var i = 0; i < db.users.length; i++) if (db.users[i].id === id) return db.users[i];
+    return null;
+  }
+
+  function admins() {
+    return db.users.filter(function (row) { return row.role === "admin"; });
+  }
+
+  function accountRows() {
+    return db.users.filter(function (row) { return row.role === "user"; });
+  }
+
+  function log(kind, username) {
+    var meta = clientMeta();
+    db.events.unshift({
+      id: uid(), kind: kind, username: username || null,
+      ip: meta.ip, user_agent: meta.userAgent, created_at: nowIso()
+    });
+    if (db.events.length > 2000) db.events.length = 2000;
+  }
+
+  function clientMeta() {
+    var ua = "";
+    try { ua = String(navigator.userAgent || "").slice(0, 28); } catch (e) {}
+    return { ip: "本机演示", userAgent: ua };
+  }
+
+  function requireAdmin() {
+    var row = db.me.admin ? findById(db.me.admin) : null;
+    if (!row || row.role !== "admin") return fail("login_required", 401);
+    return row;
+  }
+
+  function dayKey(iso) {
+    var t = Date.parse(iso);
+    return Number.isFinite(t) ? new Date(t + 8 * HOUR).toISOString().slice(0, 10) : "";
+  }
+
+  function overview() {
+    var now = Date.now();
+    var accounts = accountRows(), adminRows = admins();
+    var byKind = function (list, kind) {
+      return list.filter(function (row) { return row.kind === kind; }).length;
+    };
+    var recent = db.events.filter(function (row) {
+      var t = Date.parse(row.created_at);
+      return Number.isFinite(t) && now - t < DAY;
+    });
+    var days = [];
+    for (var index = 6; index >= 0; index -= 1) {
+      var key = new Date(now - index * DAY + 8 * HOUR).toISOString().slice(0, 10);
+      var inDay = db.events.filter(function (row) { return dayKey(row.created_at) === key; });
+      days.push({ date: key, account: byKind(inDay, "account"), guest: byKind(inDay, "guest"), admin: byKind(inDay, "admin") });
+    }
+    var top = accounts.slice().sort(function (a, b) {
+      return (Date.parse(b.last_login_at || "") || 0) - (Date.parse(a.last_login_at || "") || 0);
+    }).slice(0, 5).map(function (row) {
+      return {
+        username: row.username, role_label: row.display_name,
+        last_login_at: row.last_login_at || null, login_count: row.login_count || 0
+      };
+    });
+    return {
+      generated_at: new Date(now).toISOString(),
+      window_hours: 24,
+      list_bound: LIST_BOUND,
+      totals: {
+        accounts: accounts.length,
+        admins: adminRows.length,
+        guests: db.guests.length,
+        active_accounts_7d: accounts.filter(function (row) {
+          var t = Date.parse(row.last_login_at || "");
+          return Number.isFinite(t) && now - t < 7 * DAY;
+        }).length
+      },
+      last_24h: {
+        account_logins: byKind(recent, "account"),
+        guest_visits: byKind(recent, "guest"),
+        admin_logins: byKind(recent, "admin")
+      },
+      days: days,
+      top_logins: top
+    };
+  }
+
+  function dispatch(path, body) {
+    if (path === "/api/health") return ok({ ok: true, service: "xinli-ligand-auth-demo", demo: true });
+    if (path === "/api/admin/status") return ok({ seeded: admins().length > 0 });
+
+    if (path === "/api/session") {
+      var current = db.me.user ? findById(db.me.user) : null;
+      return ok({ user: current ? publicUser(current) : null, guest: !!db.me.guest });
+    }
+
+    if (path === "/api/guest") {
+      if (!db.me.guest || !guestAlive(db.me.guest)) {
+        var row = { id: uid(), created_at: nowIso(), last_seen_at: nowIso() };
+        db.guests.push(row);
+        if (db.guests.length > LIST_BOUND) db.guests.shift();
+        db.me.guest = row.id;
+        log("guest", null);
+      }
+      save();
+      return { status: 201, data: { ok: true, demo: true } };
+    }
+
+    if (path === "/api/register") {
+      var name = canonicalUsername(body.username);
+      if (name.__fail) return failOf(name);
+      var pw = checkPassword(body.password, USER_MIN);
+      if (pw.__fail) return failOf(pw);
+      var label = checkLabel(body.role_label);
+      if (label.__fail) return failOf(label);
+      if (find(name)) return failOf(fail("username_taken", 409));
+      var salt = randHex(16);
+      var created = {
+        id: uid(), username: name, role: "user", display_name: label,
+        salt: salt, hash: derive(pw, salt),
+        created_at: nowIso(), last_login_at: nowIso(), login_count: 1
+      };
+      db.users.push(created);
+      db.me.user = created.id;
+      db.me.guest = null;
+      log("account", name);
+      save();
+      return { status: 201, data: { user: publicUser(created), demo: true } };
+    }
+
+    if (path === "/api/login") {
+      var loginName = canonicalUsername(body.username);
+      if (loginName.__fail) return failOf(loginName);
+      var loginPw = checkLoginPassword(body.password);
+      if (loginPw.__fail) return failOf(loginPw);
+      var found = find(loginName);
+      // 与生产一致：主页面登录不区分角色，管理员账号也能从主页面进入。
+      if (!found || derive(loginPw, found.salt) !== found.hash) {
+        return failOf(fail("invalid_credentials", 401));
+      }
+      found.last_login_at = nowIso();
+      found.login_count = (found.login_count || 0) + 1;
+      db.me.user = found.id;
+      db.me.guest = null;
+      log("account", found.username);
+      save();
+      return ok({ user: publicUser(found), demo: true });
+    }
+
+    if (path === "/api/logout") {
+      db.me.user = null;
+      save();
+      return ok({ ok: true, demo: true });
+    }
+
+    if (path === "/api/admin/setup") {
+      if (admins().length > 0) return failOf(fail("already_seeded", 409));
+      var adminName = canonicalUsername(body.username);
+      if (adminName.__fail) return failOf(adminName);
+      var adminPw = checkPassword(body.password, ADMIN_MIN);
+      if (adminPw.__fail) return failOf(adminPw);
+      if (find(adminName)) return failOf(fail("username_taken", 409));
+      var adminSalt = randHex(16);
+      var admin = {
+        id: uid(), username: adminName, role: "admin", display_name: "管理员",
+        salt: adminSalt, hash: derive(adminPw, adminSalt),
+        created_at: nowIso(), last_login_at: nowIso(), login_count: 1
+      };
+      db.users.push(admin);
+      db.me.admin = admin.id;
+      log("admin_setup", admin.username);
+      save();
+      return { status: 201, data: { user: publicUser(admin), demo: true } };
+    }
+
+    if (path === "/api/admin/login") {
+      var target = canonicalUsername(body.username);
+      if (target.__fail) return failOf(target);
+      var targetPw = checkLoginPassword(body.password);
+      if (targetPw.__fail) return failOf(targetPw);
+      var hit = find(target);
+      if (!hit || hit.role !== "admin" || derive(targetPw, hit.salt) !== hit.hash) {
+        return failOf(fail("invalid_credentials", 401));
+      }
+      hit.last_login_at = nowIso();
+      hit.login_count = (hit.login_count || 0) + 1;
+      db.me.admin = hit.id;
+      log("admin", hit.username);
+      save();
+      return ok({ user: publicUser(hit), demo: true });
+    }
+
+    if (path === "/api/admin/logout") {
+      db.me.admin = null;
+      save();
+      return ok({ ok: true, demo: true });
+    }
+
+    if (path === "/api/admin/overview") {
+      var adminRow = requireAdmin();
+      if (adminRow.__fail) return failOf(adminRow);
+      return ok(overview());
+    }
+
+    if (path === "/api/admin/users") {
+      var adminRow2 = requireAdmin();
+      if (adminRow2.__fail) return failOf(adminRow2);
+      var items = db.users.slice().sort(function (a, b) {
+        return (Date.parse(b.last_login_at || "") || 0) - (Date.parse(a.last_login_at || "") || 0);
+      }).slice(0, PAGE_LIMIT).map(function (row) {
+        var pub = publicUser(row);
+        pub.id = row.id;
+        return pub;
+      });
+      return ok({ list_bound: LIST_BOUND, page_limit: PAGE_LIMIT, items: items });
+    }
+
+    if (path === "/api/admin/events") {
+      var adminRow3 = requireAdmin();
+      if (adminRow3.__fail) return failOf(adminRow3);
+      return ok({
+        list_bound: LIST_BOUND, page_limit: PAGE_LIMIT,
+        items: db.events.slice(0, PAGE_LIMIT)
+      });
+    }
+
+    return failOf(fail("not_found", 404));
+  }
+
+  function guestAlive(id) {
+    for (var i = 0; i < db.guests.length; i++) if (db.guests[i].id === id) return true;
+    return false;
+  }
+
+  function ok(data) { return { status: 200, data: data }; }
+  function failOf(error) { return { status: error.status, data: { error: error.code } }; }
+
+  function handle(path, body) {
+    var result = dispatch(path, body || {});
+    paint();
+    return Promise.resolve(result);
+  }
+
+  /* ===== 横幅：把「这是演示数据」写在页面最上面，不靠脚注 ===== */
+
+  function isAdminPage() {
+    return /admin/i.test(location.pathname);
+  }
+
+  var bar = null;
+
+  function paint() {
+    if (!bar) return;
+    bar.querySelector("[data-demo-count]").textContent =
+      accountRows().length + " 个账号 · " + db.guests.length + " 个游客会话 · " + db.events.length + " 条进入记录";
+    var notice = bar.querySelector("[data-demo-sample]");
+    notice.hidden = !db.samples;
+    notice.textContent = "已灌入示例记录：用户名都带 demo_ 前缀，是造出来的演示数据，不是真实访客。";
+    var seed = bar.querySelector('[data-demo-act="seed"]');
+    if (seed) {
+      seed.disabled = db.samples;
+      seed.textContent = db.samples ? "示例记录已灌入（每个浏览器只一次）" : "灌入示例访问记录";
+      seed.setAttribute("style", buttonStyle(db.samples));
+    }
+  }
+
+  function buttonStyle(disabled) {
+    return "border:1px solid #C9A96A;background:#fff;color:#5C4A16;border-radius:8px;padding:6px 10px;"
+      + "font:inherit;font-size:12px;cursor:" + (disabled ? "default;opacity:.55" : "pointer");
+  }
+
+  function banner() {
+    if (bar) return;
+    bar = document.createElement("div");
+    bar.setAttribute("style",
+      "background:#FFF6E5;border-bottom:1px solid #E8D7AE;color:#5C4A16;" +
+      "padding:9px 14px;font-size:12px;line-height:1.55;");
+    bar.innerHTML =
+      '<div style="max-width:820px;margin:0 auto">' +
+      '<b>演示模式</b> · 这份副本没有连服务器，注册与访问记录只保存在当前浏览器（localStorage），关闭浏览器数据仍在，换设备看不到。' +
+      '真实后端版本部署在站点 Function + PostgreSQL 上。<b style="color:#8a5a06">请勿输入你正在使用的真实密码。</b>' +
+      '<div data-demo-count style="margin-top:4px"></div>' +
+      '<div data-demo-sample style="margin-top:4px;color:#8a5a06;font-weight:700" hidden></div>' +
+      '<div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap">' +
+      (isAdminPage() ? '<button data-demo-act="seed" style="' + buttonStyle(false) + '">灌入示例访问记录</button>' : "") +
+      '<button data-demo-act="reset" style="' + buttonStyle(false) + '">清空本机演示数据</button>' +
+      '</div></div>';
+    document.body.insertBefore(bar, document.body.firstChild);
+    bar.addEventListener("click", function (event) {
+      var button = event.target.closest ? event.target.closest("[data-demo-act]") : null;
+      if (!button) return;
+      var act = button.getAttribute("data-demo-act");
+      if (act === "reset") {
+        db = fresh();
+        save();
+        location.reload();
+        return;
+      }
+      if (act === "seed") {
+        seedSamples();
+        save();
+        paint();
+      }
+    });
+    paint();
+  }
+
+  // 示例记录：用户名一律带 demo_ 前缀，配合横幅上的「非真实访客」说明，避免被当成真实流量。
+  function seedSamples() {
+    if (db.samples) return;
+    var labels = ["家长", "老师", "教练", "家长", "其它"];
+    var names = ["demo_jiazhang01", "demo_laoshi02", "demo_jiaolian03", "demo_mama14", "demo_qita05"];
+    for (var i = 0; i < names.length; i++) {
+      if (find(names[i])) continue;
+      var salt = randHex(16);
+      db.users.push({
+        id: uid(), username: names[i], role: "user", display_name: labels[i],
+        salt: salt, hash: derive("demo-sample-" + names[i], salt),
+        created_at: new Date(Date.now() - (i + 2) * DAY).toISOString(),
+        last_login_at: new Date(Date.now() - i * 20 * HOUR).toISOString(),
+        login_count: 2 + i
+      });
+    }
+    for (var g = 0; g < 4; g++) {
+      var stamp = new Date(Date.now() - g * 14 * HOUR).toISOString();
+      db.guests.push({ id: uid(), created_at: stamp, last_seen_at: stamp });
+    }
+    var kinds = ["account", "guest", "guest", "account", "admin", "guest", "account", "guest"];
+    for (var d = 0; d < 7; d++) {
+      for (var k = 0; k < kinds.length; k++) {
+        if ((d + k) % 3 === 0) continue;
+        var kind = kinds[k];
+        var when = new Date(Date.now() - d * DAY - k * 90 * 60000).toISOString();
+        db.events.push({
+          id: uid(), kind: kind,
+          username: kind === "account" ? names[(d + k) % names.length] : (kind === "admin" ? (db.me.admin ? findById(db.me.admin).username : "admin") : null),
+          ip: "本机演示", user_agent: "示例数据", created_at: when
+        });
+      }
+    }
+    db.events.sort(function (a, b) { return Date.parse(b.created_at) - Date.parse(a.created_at); });
+    db.samples = true;
+  }
+
+  window.demoHit = function (path, body) {
+    window.demoHit.active = true;
+    if (!db) db = load();
+    banner();
+    return handle(path, body);
+  };
+})();
+
+</script>
+<script>
+"use strict";
+var P = {
+  home:"M3 10.5 12 3l9 7.5M5 9.5V21h14V9.5",
+  check:"M9 3h6v4H9zM9 5H7a2 2 0 0 0-2 2v14h14V7a2 2 0 0 0-2-2h-2M9 13l2 2 4-4",
+  pen:"M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z",
+  chat:"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
+  shield:"M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10ZM12 8v6M9 11h6",
+  book:"M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5",
+  life:"M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM5.6 5.6l4.3 4.3M14.1 14.1l4.3 4.3M18.4 5.6l-4.3 4.3M9.9 14.1l-4.3 4.3",
+  users:"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+  video:"M23 7l-7 5 7 5V7zM14 5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z",
+  film:"M7 3v18M17 3v18M3 7h4M3 12h4M3 17h4M17 7h4M17 12h4M17 17h4M3 3h18v18H3z",
+  back:"m15 6-6 6 6 6", chev:"m9 6 6 6-6 6",
+  dots:"M5 12h.01M12 12h.01M19 12h.01", mini:"M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z",
+  school:"M3 9l9-5 9 5-9 5zM7 11v5c0 1.5 10 1.5 10 0v-5M21 9v6",
+  hospital:"M3 21h18M5 21V7h14v14M9 21v-4h6v4M12 8v4M10 10h4",
+  phone:"M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2Z",
+  spark:"M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"
+};
+function I(d, s) { s = s || 20; return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+d+'"/></svg>'; }
+function logo(s) { return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="#2F9E8F" stroke-linecap="round"><circle cx="6" cy="5" r="2.4" stroke-width="2"/><circle cx="18" cy="19" r="2.4" stroke-width="2"/><path d="M7.5 6.5c8 2 1 9 9 11" stroke-width="2.6"/></svg>'; }
+var MOODS = [
+  { label:"低落", mouth:"M8.5 16c1.2-1.8 5.8-1.8 7 0", color:"#9AA7AD" },
+  { label:"有点烦", mouth:"M8.5 15.5c1.5-.8 5.5-.8 7 0", color:"#7BA7C9" },
+  { label:"平静", mouth:"M8.5 15h7", color:"#E9A23B" },
+  { label:"还不错", mouth:"M8.5 14c1.2 1.8 5.8 1.8 7 0", color:"#8FCB9B" },
+  { label:"充满劲", mouth:"M8 13.5c1.5 2.5 6.5 2.5 8 0", color:"#3BA55D" }
+];
+function face(i, s) { s = s || 26; var m = MOODS[i]; return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="'+m.color+'" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="0.6" fill="'+m.color+'"/><circle cx="15" cy="10" r="0.6" fill="'+m.color+'"/><path d="'+m.mouth+'"/></svg>'; }
+var QUESTIONS = [
+  "想到要回到训练或比赛，我会紧张或害怕。",
+  "我担心受伤的地方会「再伤一次」。",
+  "做动作时我忍不住收着力，不敢完全放开。",
+  "受伤后我的睡眠变差了（难入睡、易醒或总想睡）。",
+  "看到队友继续进步，我会觉得自己被落下了。",
+  "恢复进度比预期慢时，我会烦躁或沮丧。",
+  "我最近对曾经热爱的运动提不起兴趣。",
+  "难受的时候，我选择憋在心里，不告诉任何人。"
+];
+var OPTIONS = ["从不","偶尔","经常","几乎总是"];
+function band(score) {
+  if (score <= 7) return { tone:"success", color:"var(--green)", bg:"#EDF7EF", label:"弹性良好",
+    desc:"你的心理韧带目前保持着不错的弹性，情绪和信心都在正常范围内。",
+    tips:["保持情绪记录，看见自己的每一点进步","规律康复训练，也给自己留出休息和玩耍的时间","去看看同龄人的故事，或把你的经验分享给别人"] };
+  if (score <= 14) return { tone:"warning", color:"var(--warn)", bg:"var(--warn-bg)", label:"有点紧绷",
+    desc:"康复期出现担心、烦躁或信心波动很常见，你的心理韧带正在承受一些拉力。",
+    tips:["读一读「再次受伤恐惧」科普，给害怕起个名字","把担忧写进记录，看看它一周里的变化","找一个信任的人聊聊：家长、老师或教练"] };
+  return { tone:"danger", color:"var(--danger)", bg:"var(--danger-bg)", label:"需要支持",
+    desc:"这段时间你可能扛了很多。请记住：求助不是软弱，而是康复的一部分。",
+    tips:["尽快告诉家长或老师你最近的状态","查看专业支持与求助资源，考虑心理老师或医生的帮助","暂时把「马上回到赛场」放下，先照顾情绪和睡眠"] };
+}
+var STORIES = [
+  { id:"s1", kind:"真实案例 · 公开报道", icon:"chat", title:"徐梦桃：切除六成半月板的膝盖，跳成了奥运冠军",
+    meta:"自由式滑雪空中技巧 · 2016 年前交叉韧带断裂 · 五战冬奥",
+    quote:"「每一次康复训练，我都告诫自己，只要还能站起来，我一定要重返赛场。」——徐梦桃自传",
+    body:[
+      "2016 年初的全国冬运会，徐梦桃挑战向后翻腾三周失败，重重摔在雪地上。诊断结果是一连串的：左膝前交叉韧带完全断裂、内侧副韧带扭伤、半月板损伤、多发骨挫伤。手术切除了她左膝外侧半月板的约六成，医生不止一次告诉她：这样的膝盖，运动生涯可能到此为止了。",
+      "那是她运动生涯里最暗的一段日子。坐在轮椅上的无助，恢复训练时钻心的疼，深夜里反复问自己「还练吗？坚持，还是不坚持？」外界也有声音说，她或许就是「亚军命」。换作很多人，可能就体面退场了。",
+      "2016 年 2 月，她在北医三院接受了前交叉韧带重建手术。术后三个月的 5 月 8 日，她回到国家队，跟着体能教练牛雪松训练。她形容自己当时的水平「就是普通人」。秦皇岛训练基地那间简陋的健身房里，器材有限、窗户很小，夏天闷热潮湿，教练一点点用手掰着她的腿，一组十二次，每天八到十组，汗水一遍遍湿透衣衫。",
+      "也是从那次受伤开始，她养成了写日记的习惯。她说：「不是成功的人才值得去挖掘背后的东西，即使不成功，我也要记录自己的故事。」写着写着，她想明白了一件事：荣誉不是今天想、明天就会到的东西，把每一天做好、每一天去努力，就够了。",
+      "九个月后，她在阿尔卑斯山完成了术后第一堂雪上跳台训练，成功做出高难度的三周台动作。完成的那一刻，她仰天长啸——那是向所有人宣告：我回来了。",
+      "但故事没有就此变成童话。2018 年平昌冬奥会，她落地失误，只拿到第九名。回国后双腿又接受手术，她坦言当时「眼泪止不住地流」。父亲对她说：别轻易放弃。她慢慢接受了现实，也学会了区分「疼痛的信号」和「伤病的信号」，在年龄焦虑和伤病恐惧之间，找到属于自己的平衡。",
+      "2022 年北京冬奥会，31 岁的徐梦桃拿下金牌，对着镜头喊出那句「我是第一吗」；2026 年米兰，35 岁的她成功卫冕。二十多年间，她经历了四次大手术，双腿里植入过七根钢钉。领奖台上，她把手放在膝盖的伤疤上——那个画面，比任何金牌都重。"
+    ],
+    helped:["把「重返赛场」拆成每一天的小目标：今天能完成什么","用日记记录情绪和进步，低谷也值得被写下来","区分疼痛信号与伤病信号，听身体的话，也信科学康复","想放弃的时候，和家人、团队说出来，别一个人扛"],
+    sources:[
+      { label:"新浪体育《人物｜徐梦桃的雪上奇迹》", url:"https://news.sina.cn/j_uc.d.html?docid=fyihrit1130289" },
+      { label:"新浪《徐梦桃还在场，比「徐梦桃赢了」更重要》", url:"https://k.sina.cn/article_7096020377_1a6f4ad9901901ezfc.html" },
+      { label:"搜狐新闻（含自传引语与康复细节）", url:"https://m.sohu.com/a/989147691_121606050" }
+    ] },
+  { id:"s2", kind:"真实案例 · 公开报道", icon:"chat", title:"隋文静：72 小时极限疼痛后，她重新学会走路",
+    meta:"花样滑冰双人滑 · 2016 年双踝手术 · 北京冬奥夺冠",
+    quote:"「我能听见每颗钉子敲进我骨头的声音，甚至能闻到钻头磨掉骨头的味道。」——隋文静",
+    body:[
+      "从 2012 年起，伤病就没离开过隋文静：韧带松弛、骨骺炎，让她很难完成高难度动作。2016 年 4 月的波士顿世锦赛，她带着伤拿下双人滑亚军，场边的队医忍不住落泪：「换做一般人，这种程度的伤早就不能走路了。」",
+      "2016 年 5 月 5 日，她躺上手术台，接受右侧脚踝外侧副韧带重建和左侧脚踝肌腱复位手术。手术持续近四个小时，因为是半麻醉，她清晰地感觉到整个过程。醒来后，两只脚被包扎得像「阿童木」，任何一次下意识的抬脚都会让疼痛变本加厉。术后 72 小时是极限疼痛，她只能靠止疼针每天睡上两三个小时，在微博上写下四个字：「大写的疼」。",
+      "她在床上躺了将近三个月，长期卧床让她失去了全部的肌肉力量，连站立都要从零开始。「天都灰了。」她真的怀疑过，自己是不是要彻底离开冰场了。",
+      "那段时间，搭档韩聪一个人训练，练完男伴的计划再练女伴的，训练结束就去医院陪她。2016 年 7 月的「冰上盛典」，韩聪独自滑了一套「双人滑」：一个人的捻转，一个人的托举，他把双臂伸向空气，稳稳托起一片虚无。表演最后，他推着坐在轮椅上的隋文静来到冰场中央。她哭着向观众挥手——那一刻，她觉得自己离冰场又近了一步。",
+      "康复是从重新学走路开始的，每迈出一步都像人生的第一步。第一次回到冰上，医生只给了她十分钟，她滑了十五分钟，「笑得像一百斤的胖子」。",
+      "2017 年 2 月，复出后的第一场比赛，她和韩聪以创历史最高分拿下四大洲锦标赛冠军；一个月后的赫尔辛基世锦赛，两人夺回中国阔别七年的双人滑世界冠军。2018 年平昌冬奥会，他们以 0.43 分之差摘银，赛后她的脚踝再次手术；2019 年世锦赛，他们重夺金牌。",
+      "2022 年北京冬奥会，自由滑音乐停下的那一刻，隋文静的泪水夺眶而出——他们以 0.63 分的优势夺冠，终于站上冬奥最高领奖台。而 2020 年韩聪做髋关节手术时，她也像他当年等自己一样，等着搭档回来。他说得轻描淡写：「就是钉了四个钉子，磨了点儿骨头。」"
+    ],
+    helped:["接受「从零开始」是康复的一部分，不是失败","让陪伴成为力量：搭档、家人、队友的等待也是康复","把疼痛写下来、说出来，表达本身就在消化痛苦","复出不是为了证明给谁看，是因为还热爱那片冰场"],
+    sources:[
+      { label:"人民画报《隋文静韩聪：我做不到的，我们可以》", url:"http://www.rmhb.com.cn/rw/202206/t20220624_800298594.html" },
+      { label:"新华网《冬奥「大白」，60余年故事未完》", url:"http://www.news.cn/mrdx/2022-04/11/c_1310552499.htm" },
+      { label:"中国妇女报《「金桥」一曲忧愁去》", url:"http://paper.cnwomen.com.cn/zgfnb/html/2022-03/31/nw.D110000zgfnb_20220331_1-4.htm" }
+    ] },
+  { id:"s3", kind:"真实案例 · 同龄人", icon:"chat", title:"14 岁泰拳少年小陈：被建议「等两年」，他没有放弃赛场梦",
+    meta:"小陈（化名）· 14 岁 · 澳门 · 前交叉韧带断裂 · 2026 年公开报道",
+    quote:"「没想到手术这么快，恢复也这么顺利，做完一天就能下地。」——小陈家人",
+    body:[
+      "14 岁的小陈（化名）来自澳门，是个浑身是劲的泰拳爱好者。平日里他泡在训练场，满心都是走上赛场拼搏的梦想。",
+      "一场意外让这份热情戛然而止：打球时他不小心扭伤右膝，当场疼得站不住，膝盖肿得像馒头。在当地医院处理后，膝盖还是不稳当，别说训练，连正常走路都受影响。",
+      "检查结果确认了前交叉韧带断裂。但因为他才 14 岁、骨骼还没发育成熟，当地医生建议等 16 岁骨骺闭合后再手术。这意味着要暂停训练整整两年——对正处在技术上升关键期的他来说，几乎是断了赛场的希望。那段时间，全家人都跟着着急。",
+      "不想让孩子的梦想就此搁浅，家人四处打听，了解到暨南大学附属第一医院运动医学科李劼若主任团队在青少年韧带损伤治疗方面经验丰富，便带着小陈专程从澳门赶到广州。",
+      "团队没有只凭年龄判断。他们为小陈做了全面检查，结合骨龄评估和他泰拳运动的特殊需求，制定了个性化方案：用他自己的肌腱作为移植物，配合 OTT（越顶位）重建技术，在关节镜下完成韧带重建——精准避开生长板区域，既保证重建韧带牢固，又不影响后续长高。",
+      "术后第一天，小陈就能在医护人员指导下戴着护具、拄着拐杖下地走路，并开始简单的康复训练；术后第五天，他顺利出院。家人感慨恢复之快，而小陈心里重新燃起的，是重返赛场的希望。",
+      "回头看，最煎熬的其实不是疼痛，而是「要等两年」那种梦想被悬置的感觉。帮到他的，是家人没有放弃他的梦想、愿意陪他跨城求医，也是医生把他的运动目标当回事，认真为他想办法。"
+    ],
+    helped:["青少年受伤不等于「只能等长大」，可以找运动医学科评估第二方案","把自己的运动目标告诉医生，康复方案可以个性化","家人「一起想办法」本身，就是给孩子最重要的心理支持","术后早期科学康复是重返赛场的关键，不是躺着静养等它好"],
+    sources:[
+      { label:"南方农村报《拳击少年韧带断裂险别赛场》", url:"http://www.nfncb.cn/jiankang/56537.html" },
+      { label:"搜狐《澳门泰拳少年意外扭断韧带》", url:"https://www.sohu.com/a/1003587309_161795" },
+      { label:"新浪《拳击少年韧带撕裂，怕耽误又怕影响长个子怎么办？》", url:"https://k.sina.cn/article_5787187353_158f17899020022yl4.html" }
+    ] }
+];
+var VIDEOS = [
+  { id:"v1", bvid:"BV1VjfABLEUw", title:"徐梦桃：回顾五次冬奥之旅", up:"今晚会客厅", dur:"4 分 56 秒",
+    intro:"从 19 岁初登冬奥到 31 岁夺冠，两段采访影像，看她如何在伤病与低谷后一次次再出发。" },
+  { id:"v2", bvid:"BV1QaBoB3EAg", title:"隋文静韩聪：冠军背后的伤痛与坚持", up:"小油条看剧", dur:"2 分 10 秒",
+    intro:"2016 年双踝手术、「一个人的托举」，到重回世界之巅的康复之路。" },
+  { id:"v3", bvid:"BV1SUA7zWEPk", title:"前交叉韧带重建全攻略", up:"运动医学陈世益教授", dur:"5 分 55 秒",
+    intro:"运动医学专家讲解从术前准备到术后康复的关键点，看懂自己正在走的路。" },
+  { id:"v4", bvid:"BV16yTz6cEEv", title:"前交叉韧带损伤康复训练要注意什么", up:"张翔炜的运动康复", dur:"1 分 54 秒",
+    intro:"康复师讲解常见误区：手术时机、开链与闭链动作，康复观念先到位。" }
+];
+var ARTICLES = [
+  { id:"a1", title:"为什么我会害怕再次受伤？", intro:"害怕不是胆小，而是大脑在受伤后启动的保护机制。认识它，才能和它合作。",
+    sections:[{ h:"恐惧从哪里来", items:["受伤瞬间的疼痛和失控感，会被大脑「重点存档」","相似场景（起跳、对抗、落地）会自动触发警报","这是正常反应，几乎每个运动损伤后的人都会经历"] },
+      { h:"三个小练习", items:["命名它：把「我完了」改成「我的警报又响了」","呼吸降温：4 秒吸气、6 秒呼气，重复 5 轮","阶梯面对：把害怕的动作拆成 5 级，从最轻的开始"] }] },
+  { id:"a2", title:"重建身体信任：渐进清单", intro:"信任不是想出来的，是一次次「做到了」攒出来的。",
+    sections:[{ h:"清单示例（以膝伤为例）", items:["第 1 级：日常走路、上下楼无痛","第 2 级：慢跑 10 分钟","第 3 级：变速跑、侧向移动","第 4 级：跳跃落地、急停","第 5 级：对抗训练，再到正式比赛"] },
+      { h:"使用原则", items:["每一级稳定完成 3–5 次再升级","害怕评分下降一半以上，再进入下一级","反复是信息不是失败：退回上一级，稳住再来"] }] },
+  { id:"a3", title:"重返运动前的心理准备清单", intro:"身体达标之外，心理也有自己的「复出标准」。",
+    sections:[{ h:"自查四问", items:["想到比赛，我更多是期待，还是强烈恐惧？","我能否接受「状态可能不如从前」？","我知道再次受伤的风险，并知道如何应对吗？","我身边有可以求助的人吗？"] },
+      { h:"给复出加一个缓冲", items:["先参加训练，再替补上场，再首发","和教练约定「心理暂停」暗号：状态不对可以主动下场","赛后无论表现如何，先肯定「我回来了」"] }] },
+  { id:"a4", title:"康复期情绪波动是正常的", intro:"恢复不是一条直线。心情起伏、想放弃、突然烦躁，都是康复的一部分。",
+    sections:[{ h:"为什么会波动", items:["进步有平台期，努力暂时看不到回报","生活被训练和复查切碎，失去「正常感」","睡眠、疼痛和激素都在影响情绪"] },
+      { h:"可以怎么做", items:["用记录把波动画出来：你会发现低谷总会过去","给情绪起名字：「今天是沮丧，不是我不好」","波动大的日子，把目标降到「完成最小一步」"] }] }
+];
+var SITUATIONS = [
+  { id:"p1", role:"parent", title:"孩子说「我不想再练了」",
+    dos:["先接住情绪：「听起来你最近真的很累。」","问问「不想练」背后是怕、是累，还是失落","把决定暂缓：先休息几天，再一起聊"],
+    avoid:["「这点伤就放弃？」","马上讲道理、加报训练班"], say:"练不练我们慢慢商量，我先想知道你最近心里是什么感觉。" },
+  { id:"p2", role:"parent", title:"孩子康复期情绪低落、易怒",
+    dos:["看见情绪背后的努力：「你一直在坚持，很辛苦。」","保持日常节奏，邀请散步、做饭等轻活动","持续两周以上明显低落，联系心理老师或医生"],
+    avoid:["「别想太多就好了」","把情绪当成「不听话」"], say:"你不用马上好起来，我陪你慢慢来。" },
+  { id:"t1", role:"teacher", title:"学生因伤免修体育，觉得被孤立",
+    dos:["提供替代参与：计时员、战术分析、队刊记录","和体育老师沟通「渐进回归」安排","私下关心，避免当众特殊化"],
+    avoid:["当众宣布「他不能上」","把他完全排除在体育活动之外"], say:"球队不只有上场的人，你的位置也很重要。" },
+  { id:"t2", role:"teacher", title:"学生担心「落后了」而焦虑",
+    dos:["承认压力真实存在：「担心进度是很正常的。」","一起拆小目标，把「追上」变成「今天完成什么」","与家长沟通，降低短期成绩期待"],
+    avoid:["「别担心，没事的」一句带过","用排名和进度继续施压"], say:"健康是 1，成绩是后面的 0。我们先把 1 立稳。" },
+  { id:"c1", role:"coach", title:"队员做动作时害怕、收着练",
+    dos:["把动作拆级，让队员自己控制升级节奏","肯定「说出害怕」是负责任的表现","与康复师对齐进度，不抢跑"],
+    avoid:["「别怂，大胆做！」","用全队等待来施压"], say:"害怕说明你在认真保护自己，我们一级一级来。" },
+  { id:"c2", role:"coach", title:"队员急于复出，想跳过康复步骤",
+    dos:["约定客观复出标准：力量、动作质量、心理准备度都达标","用「先训练、再替补、再首发」的缓冲路径","讲清楚：心理准备也是复出标准的一部分"],
+    avoid:["被求战心切带着走","「想上就上」"], say:"我比谁都想你回来，但我们要一起稳稳地回来。" }
+];
+var ROLES = [{ key:"parent", label:"家长" },{ key:"teacher", label:"老师" },{ key:"coach", label:"教练" }];
+var CHAT_GREET = {
+  parent:"你好，我是「心里韧带」沟通教练（内置应答演示版）。告诉我孩子最近的情况，我们一起想怎么回应。",
+  teacher:"你好，我是沟通教练（内置应答演示版）。说说这个学生的情况，我们一起想怎么支持他。",
+  coach:"你好，我是沟通教练（内置应答演示版）。说说队员的情况，我们一起想怎么带他回到训练。"
+};
+var CHAT_HINT = { parent:"孩子最近让你最担心的是什么？", teacher:"这个学生最近的状态怎么样？", coach:"队员现在卡在哪个环节？" };
+var CHAT_CHIPS = {
+  parent:["孩子说「我不想再练了」","孩子最近情绪很低落、易怒","孩子害怕再次受伤，不敢做动作","怎么开口和孩子聊康复？"],
+  teacher:["学生因伤免修体育，觉得被孤立","学生担心落后了，很焦虑","学生害怕再次受伤","怎么和学生聊他的伤？"],
+  coach:["队员做动作时害怕、收着练","队员急于复出，想跳过康复步骤","队员说想放弃","怎么和队员谈复出安排？"]
+};
+var CHAT_TOPICS = [
+  { id:"giveup", kws:["不想练","不想再练","不练","不愿练","不想去","放弃","退役","退队","不想滑","不想打","不去了"],
+    sit:{parent:"p1"},
+    lead:"听到「不想练了」，先别急着纠正。这句话背后通常是怕、累或失落，而不是真的不爱这项运动了。",
+    dos:["先接住情绪：「听起来你最近真的很累。」","问问「不想练」背后是怕、是累，还是失落","把决定暂缓：先休息几天，再一起聊"],
+    avoid:["「这点伤就放弃？」","马上讲道理、加报训练班"],
+    say:{ parent:"练不练我们慢慢商量，我先想知道你最近心里是什么感觉。", teacher:"要不要继续，我们一起看看再说。我更想知道你最近经历了什么。", coach:"队伍的位置给你留着。先说说，是身体累，还是心里累？" },
+    follow:"他是在什么情境下说这句话的？训练后、复查后，还是看到队友比赛时？",
+    more:["观察一到两周：记下他情绪低落和稍微轻松的时刻，找规律","找一个他信任的人（心理老师、康复师、好友）先聊聊","如果持续两周以上明显低落、影响睡眠食欲，联系心理老师或医生评估"] },
+  { id:"mood", kws:["低落","易怒","发脾气","烦躁","哭","情绪","抑郁","开心不起来"],
+    sit:{parent:"p2"},
+    lead:"康复期情绪低落、易怒很常见。疼痛、进度慢、失去「正常生活」，都在消耗他的心理能量。情绪不是「不听话」，是他在求救。",
+    dos:["看见情绪背后的努力：「你一直在坚持，很辛苦。」","保持日常节奏，邀请散步、做饭等轻活动","允许他难过，不急着把他「修好」"],
+    avoid:["「别想太多就好了」","把情绪当成叛逆来批评"],
+    say:{ parent:"你不用马上好起来，我陪你慢慢来。", teacher:"最近看起来你挺累的，愿意和我说说吗？不方便也没关系。", coach:"状态有起伏很正常，训练计划我们可以跟着调。" },
+    follow:"这种状态持续多久了？睡眠和吃饭有没有受影响？",
+    more:["持续两周以上明显低落，或睡眠食欲明显变差，建议联系学校心理老师或医院心理科","把「情绪与康复记录」用起来：每天记一笔，看见波动的形状","减少追问「什么时候能好」，多问「今天感觉怎么样」"] },
+  { id:"fear", kws:["害怕","恐惧","不敢","紧张","收着","怕"],
+    sit:{coach:"c1"},
+    lead:"害怕再次受伤不是胆小，而是大脑在认真保护他。恐惧是受伤后正常的保护反应，要做的不是消灭它，而是听懂它、带着它一级一级往前走。",
+    dos:["给害怕起名字、打分（0–10），看着它变化","阶梯式面对：先看不练，再轻练，再对抗，每一级等害怕明显下降再升级","肯定「说出害怕」是负责任的表现"],
+    avoid:["「别怂，大胆做！」","用全队等待或比赛压力逼他放开"],
+    say:{ parent:"害怕很正常，我们一级一级来，我陪着你。", teacher:"不敢做不是你的错，我们可以先从看和轻练开始。", coach:"害怕说明你在认真保护自己，我们一级一级来。" },
+    follow:"他最怕的是哪个动作或场景？起跳、对抗，还是落地？",
+    more:["和康复师一起把害怕的动作拆成 5 级，从最轻的开始","每一级稳定完成 3–5 次、害怕评分下降一半以上再升级","反复是信息不是失败：退回上一级稳住再来，不抢跑"] },
+  { id:"rush", kws:["急于","急着","想复出","想上场","想比赛","跳过","等不及","着急"],
+    sit:{coach:"c2"},
+    lead:"想快点回来，说明他还热爱这项运动。但跳过康复步骤的复出，身体和心理都更容易再受伤。要把「想上」的心情接住，再把标准立稳。",
+    dos:["约定客观复出标准：力量、动作质量、心理准备度都达标","用「先训练、再替补、再首发」的缓冲路径","讲清楚：心理准备也是复出标准的一部分"],
+    avoid:["被求战心切带着走","「想上就上」"],
+    say:{ parent:"我理解你特别想回去，我们一起把复出的条件列清楚，达标了就去。", teacher:"复出有复出的标准，我们把该做的准备做完，机会来了才接得住。", coach:"我比谁都想你回来，但我们要一起稳稳地回来。" },
+    follow:"他为什么这么急？是有比赛节点，还是怕被队伍落下？",
+    more:["把复出标准写下来，让他自己参与制定，更有掌控感","和康复师对齐进度，用客观数据说话，不靠感觉","给他一个「心理暂停」约定：状态不对可以主动下场，不丢人"] },
+  { id:"isolate", kws:["孤立","不合群","排除","孤独","同学","队友不带"],
+    sit:{teacher:"t1"},
+    lead:"不能一起上场，最容易让人觉得自己「被队伍除名了」。归属感和运动表现一样重要，要给他留一个看得见的位置。",
+    dos:["提供替代参与：计时员、战术分析、队刊记录","和体育老师沟通「渐进回归」安排","私下关心，避免当众特殊化"],
+    avoid:["当众宣布「他不能上」","把他完全排除在体育活动之外"],
+    say:{ parent:"队伍不只有上场的人，你的位置也很重要。我们聊聊还能怎么参与。", teacher:"球队不只有上场的人，你的位置也很重要。", coach:"训练外的视角同样重要——帮我看看大家的落地动作，你的观察很重要。" },
+    follow:"他是自己不想去了，还是感觉别人不带他？",
+    more:["安排一两个队友主动约他参与轻量环节，比公开照顾更自然","让他承担一个具体的小角色（记录、计时、战术板），有任务就有位置","回归那天做一个小小的欢迎，让他知道队伍一直给他留着门"] },
+  { id:"behind", kws:["落后","跟不上","进度","焦虑","成绩","被落下"],
+    sit:{teacher:"t2"},
+    lead:"「被落下了」是康复期最常见的焦虑之一。担心是真实的，先承认它，再把「追上别人」换成「今天完成什么」。",
+    dos:["承认压力真实存在：「担心进度是很正常的。」","一起拆小目标，把「追上」变成「今天完成什么」","与家长沟通，降低短期成绩期待"],
+    avoid:["「别担心，没事的」一句带过","用排名和进度继续施压"],
+    say:{ parent:"健康是 1，成绩是后面的 0。我们先把 1 立稳。", teacher:"健康是 1，成绩是后面的 0。我们先把 1 立稳。", coach:"每个人的恢复节奏不一样，你现在的任务就是把自己的每一步走稳。" },
+    follow:"他最在意的是训练进度、文化课，还是队里的位置？",
+    more:["用记录让他看见自己的进步曲线，哪怕很小","把比较对象从「队友」换成「上周的自己」","伤后状态波动是规律，提前告诉他：平台期不是退步"] },
+  { id:"open", kws:["怎么开口","怎么聊","怎么说","怎么谈","沟通","开场","聊什么"],
+    lead:"开口的前提是让他感到安全：这不是审查，也不是说教，而是「我想懂你」。选对时机，比说对话更重要。",
+    dos:["选一个放松的时刻：散步、坐车、睡前，而不是正式谈话","从观察开始：「我注意到你最近……」，不评判","多听少建议，先让他说完，再问「你希望我怎么帮你」"],
+    avoid:["一上来就问「你什么时候能好」","把谈话变成讲道理"],
+    say:{ parent:"我注意到你最近练完回来都不太说话，我有点担心你。愿意聊聊吗？不想聊也没关系。", teacher:"最近看你状态有点紧，我想知道有没有我能帮上忙的地方。", coach:"今天练完留两分钟，聊聊你最近的感受，不聊技术。" },
+    follow:"你想聊的具体是哪件事？害怕、情绪，还是复出安排？",
+    more:["他沉默时不追问，留一句「想说的时候我都在」","一次只聊一件事，聊完给一个具体的小支持（陪复查、调训练）","谈完后续跟进：「上次说的那件事，后来怎么样了？」"] },
+  { id:"sleep", kws:["失眠","睡不着","睡眠","睡不好","多梦"],
+    lead:"睡眠是康复的「隐形训练」。睡不好，疼痛更敏感、情绪更紧绷、恢复更慢，值得单独认真对待。",
+    dos:["固定作息，睡前一小时离开训练复盘和手机","把担忧写在纸上再上床，告诉大脑「明天再处理」","白天保留轻度活动：散步、拉伸，晒太阳"],
+    avoid:["白天补觉超过一小时","睡前反复讨论康复进度和比赛"],
+    say:{ parent:"睡不好不是你的错，我们一起把睡前这段时间调得松一点。", teacher:"白天如果困，允许自己课间眯十分钟，别硬撑。", coach:"睡眠也是训练的一部分，恢复不够，我们就把量调下来。" },
+    follow:"这种情况持续多久了？是难入睡，还是容易醒？",
+    more:["超过两周且影响白天状态，建议和心理老师或医生聊聊","疼痛影响睡眠时，先和康复师处理疼痛，别只靠忍","记录一周睡眠，找到规律再调整，比盲目尝试更有效"] },
+  { id:"pain", kws:["疼","痛"],
+    lead:"疼痛是信号，不是敌人。康复中要学着区分「训练后的正常酸痛」和「需要警惕的疼痛」，这个判断要和康复师一起做。",
+    dos:["记录疼痛的时间、动作、程度，复诊时给康复师看","尖锐痛、肿胀加重、关节打软或卡住，及时复诊","和康复师确认当前阶段「什么感受是正常的」"],
+    avoid:["硬扛着不说","因为怕疼完全不动"],
+    say:{ parent:"疼就说出来，我们一起问康复师，不用自己忍着猜。", teacher:"训练里不舒服就停下来报告，这不是偷懒。", coach:"把疼痛的位置和感觉说清楚，我来和康复师对一下计划。" },
+    follow:"是哪种疼？训练后酸胀，还是某个动作突然刺痛？",
+    more:["给疼痛打分（0–10）并记录触发场景，帮助医生判断","完全不动会让肌肉萎缩、关节僵硬，规范康复才是正解","心理上的怕疼也会放大痛感，恐惧管理和疼痛管理要一起做"] }
+];
+var HELP_SIGNS = ["情绪低落或烦躁持续两周以上","睡眠、食欲明显变差","强烈恐惧，完全回避康复训练","觉得自己「没用了」，或出现伤害自己的念头"];
+var HELP_PATHS = [
+  { icon:"school", step:"第一步 · 学校", title:"心理老师 / 校医 / 班主任", desc:"最就近的支持。请心理老师做初步评估，并协调训练与学业安排。" },
+  { icon:"hospital", step:"第二步 · 医院", title:"运动医学科 / 康复科 · 心理科", desc:"身体复查去运动医学与康复科；情绪困扰持续时，挂心理科或精神科，和医生聊聊。" },
+  { icon:"phone", step:"第三步 · 专业机构与热线", title:"12356 心理援助热线", desc:"全国统一心理援助热线；也可前往当地精神卫生中心或正规心理服务机构。" }
+];
+var MODULES = [
+  { key:"check", icon:"check", title:"心理状态自查", desc:"识别伤后心理变化" },
+  { key:"journal", icon:"pen", title:"情绪与康复记录", desc:"记录情绪、担忧与信心" },
+  { key:"stories", icon:"chat", title:"真实故事", desc:"真实案例 · 视频短片" },
+  { key:"science", icon:"book", title:"心理科普", desc:"恐惧 · 身体信任 · 重返准备" },
+  { key:"talk", icon:"users", title:"家长/老师/教练支持", desc:"对话式沟通教练" },
+  { key:"help", icon:"life", title:"专业求助资源", desc:"学校 · 医院 · 专业机构" }
+];
+var TABS = [
+  { key:"home", icon:"home", label:"首页" },
+  { key:"check", icon:"check", label:"自查" },
+  { key:"journal", icon:"pen", label:"记录" },
+  { key:"discover", icon:"chat", label:"发现" },
+  { key:"support", icon:"shield", label:"支持" }
+];
+var TITLES = { home:"心里韧带", check:"心理状态自查", journal:"情绪与康复记录", discover:"故事与科普", support:"支持与求助", account:"账号与访问" };
+var SEED = [
+  { id:4, date:"11/8", mood:3, worry:4, confidence:6, note:"今天慢跑 10 分钟没有疼，开心。" },
+  { id:3, date:"11/6", mood:2, worry:6, confidence:5, note:"复查说恢复得不错，但还是怕变向。" },
+  { id:2, date:"11/5", mood:1, worry:7, confidence:4, note:"看到队友打比赛，心里有点落差。" },
+  { id:1, date:"11/3", mood:0, worry:8, confidence:3, note:"第一次拄拐去康复室，很紧张。" }
+];
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]; }); }
+function loadEntries() { try { var v = JSON.parse(localStorage.getItem("xl-entries-v1")); return Array.isArray(v) && v.length ? v : SEED; } catch (e) { return SEED; } }
+var S = { tab:"home", detail:null, disc:"stories", sup:"talk", role:"parent", openSit:null, quiz:-1, answers:[], mood:2, worry:5, confidence:5, note:"", entries:loadEntries(), saved:false,
+  chat:{ msgs:[{ who:"bot", lead:CHAT_GREET.parent, follow:CHAT_HINT.parent }], lastTopic:null, depth:0 }, chatBusy:false, chatDraft:"", chatFocus:false,
+  auth:{ ready:false, user:null, guest:false }, authMode:"login", authBusy:false, authMsg:null,
+  authDraft:{ username:"", password:"", role_label:"" } };
+
+function trend() {
+  var data = S.entries.slice(0, 7).reverse(), n = data.length;
+  function x(i) { return 26 + i * 266 / Math.max(n - 1, 1); }
+  function y(v) { return 100 - v * 9; }
+  function line(k) { return data.map(function (e, i) { return x(i) + "," + y(e[k]); }).join(" "); }
+  var s = '<svg viewBox="0 0 300 126" style="width:100%">';
+  [0, 5, 10].forEach(function (v) {
+    s += '<line x1="26" x2="292" y1="'+y(v)+'" y2="'+y(v)+'" stroke="#E5E1D8" stroke-width="1"'+(v ? ' stroke-dasharray="3 4"' : '')+'/>';
+    s += '<text x="20" y="'+(y(v)+3)+'" font-size="8" fill="#8A9BA3" text-anchor="end">'+v+'</text>';
+  });
+  s += '<polyline points="'+line("worry")+'" fill="none" stroke="#E9A23B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+  s += '<polyline points="'+line("confidence")+'" fill="none" stroke="#3BA55D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+  data.forEach(function (e, i) {
+    s += '<circle cx="'+x(i)+'" cy="'+y(e.confidence)+'" r="2.6" fill="#3BA55D"/><circle cx="'+x(i)+'" cy="'+y(e.worry)+'" r="2.6" fill="#E9A23B"/>';
+    s += '<text x="'+x(i)+'" y="116" font-size="8" fill="#8A9BA3" text-anchor="middle">'+esc(e.date)+'</text>';
+  });
+  return s + "</svg>";
+}
+function lis(items, color) { return items.map(function (t) { return '<div class="li"><span class="dot" style="background:'+color+'"></span><span>'+esc(t)+"</span></div>"; }).join(""); }
+
+function viewHome() {
+  var h = '<div class="col fade">';
+  h += '<div class="card row" style="gap:12px">'+logo(40)+'<div class="col" style="gap:3px"><div class="h">心里韧带</div><div class="sub">身体在康复，心也在慢慢恢复力量。</div></div></div>';
+  h += '<div class="card col"><div class="between"><span class="sub" style="font-weight:700">今天感觉怎么样？</span><span class="mut">点一点，去记录</span></div><div class="moods">';
+  MOODS.forEach(function (m, i) { h += '<button data-act="hmood" data-arg="'+i+'">'+face(i)+'<span>'+m.label+"</span></button>"; });
+  h += "</div></div>";
+  h += accountCard();
+  h += '<div class="grid">';
+  MODULES.forEach(function (m) { h += '<button class="mod" data-act="mod" data-arg="'+m.key+'"><span class="ic">'+I(P[m.icon])+'</span><span class="sub" style="font-weight:700;color:var(--ink)">'+m.title+'</span><span class="mut">'+m.desc+"</span></button>"; });
+  h += "</div>";
+  h += '<div class="card row" style="gap:10px"><span style="color:var(--warm)">'+I(P.spark,18)+'</span><div class="col" style="gap:2px"><span class="mut">每日一句</span><span class="sub">康复不是回到过去，而是带着经验重新出发。</span></div></div>';
+  h += '<div class="mut" style="text-align:center">故事来自公开报道 · 对话为内置演示 · 非医疗诊断</div></div>';
+  return h;
+}
+function viewCheck() {
+  var h = '<div class="col fade">';
+  if (S.quiz === -1) {
+    h += '<div class="card col" style="align-items:center;text-align:center;padding:20px;gap:10px"><span style="color:var(--brand)">'+I(P.check,34)+'</span><div class="h">心理状态自查</div><div class="sub">8 个简单问题，帮你留意受伤后的心理变化。没有对错，按最近两周的真实感受选择。</div><div class="mut" style="background:#EFECE4;border-radius:999px;padding:4px 10px">约 2 分钟 · 不是医学诊断</div></div>';
+    h += '<button class="btn" data-act="start">开始自查</button><div class="mut">结果只用于自我觉察。若持续困扰，请查看「支持 → 求助资源」。</div>';
+  } else if (S.quiz < QUESTIONS.length) {
+    h += '<div class="between"><span class="mut">第 '+(S.quiz+1)+" / "+QUESTIONS.length+' 题</span><button class="chip" data-act="prevq">上一题</button></div>';
+    h += '<div class="pbar"><div style="width:'+(((S.quiz+1)/QUESTIONS.length)*100)+'%"></div></div>';
+    h += '<div class="card" style="padding:16px"><div class="sub" style="font-weight:700;font-size:14px;line-height:1.7;color:var(--ink)">'+QUESTIONS[S.quiz]+"</div></div>";
+    h += '<div class="col" style="gap:8px">';
+    OPTIONS.forEach(function (o, v) { h += '<button class="opt" data-act="opt" data-arg="'+v+'"><span class="between"><span>'+o+'</span><span class="mut">'+v+" 分</span></span></button>"; });
+    h += "</div>";
+  } else {
+    var score = S.answers.reduce(function (a, b) { return a + b; }, 0), r = band(score);
+    h += '<div class="card col" style="align-items:center;text-align:center;padding:18px;gap:8px;background:'+r.bg+'"><div class="mut">自查得分 '+score+' / 24</div><div class="h" style="color:'+r.color+';font-size:20px">'+r.label+'</div><div class="sub">'+r.desc+"</div></div>";
+    h += '<div class="card col"><div class="sub" style="font-weight:700;color:var(--ink)">给你的小建议</div>'+lis(r.tips, r.color)+"</div>";
+    h += '<div class="grid"><button class="btn quiet" data-act="tab" data-arg="journal">去记录</button><button class="btn quiet" data-act="mod" data-arg="science">读科普</button></div>';
+    if (r.tone === "danger") h += '<button class="btn danger" data-act="mod" data-arg="help">查看专业求助资源</button>';
+    h += '<button class="chip" style="align-self:center" data-act="retake">重新自查</button><div class="mut">本自查不能替代专业评估。</div>';
+  }
+  return h + "</div>";
+}
+function viewJournal() {
+  var h = '<div class="col fade"><div class="card col"><div class="sub" style="font-weight:700;color:var(--ink)">今天的心情</div><div class="moods">';
+  MOODS.forEach(function (m, i) { h += '<button data-act="jmood" data-arg="'+i+'" class="'+(S.mood===i?"sel":"")+'" style="color:'+m.color+'">'+face(i)+'<span style="color:var(--mut)">'+m.label+"</span></button>"; });
+  h += "</div>";
+  h += '<div class="col" style="gap:4px"><div class="between"><span class="sub">担忧程度</span><span class="sub" style="color:var(--warm);font-weight:700" data-out="worry">'+S.worry+'</span></div><input type="range" min="0" max="10" value="'+S.worry+'" data-field="worry" style="accent-color:var(--warm)"></div>';
+  h += '<div class="col" style="gap:4px"><div class="between"><span class="sub">重返运动的信心</span><span class="sub" style="color:var(--green);font-weight:700" data-out="confidence">'+S.confidence+'</span></div><input type="range" min="0" max="10" value="'+S.confidence+'" data-field="confidence" style="accent-color:var(--green)"></div>';
+  h += '<textarea rows="3" data-field="note" placeholder="今天想说的话（可选）：担心、进步、或任何小事…">'+esc(S.note)+"</textarea>";
+  h += '<button class="btn" data-act="save">保存今天的记录</button>'+(S.saved ? '<div class="ok">已记录。每一步都算数。</div>' : "")+"</div>";
+  h += '<div class="card col"><div class="between"><span class="sub" style="font-weight:700;color:var(--ink)">信心与担忧趋势</span><span class="mut">0–10 分</span></div>'+trend();
+  h += '<div class="row" style="gap:14px"><span class="row" style="gap:5px"><span style="width:8px;height:8px;border-radius:999px;background:var(--green)"></span><span class="mut">信心</span></span><span class="row" style="gap:5px"><span style="width:8px;height:8px;border-radius:999px;background:var(--warm)"></span><span class="mut">担忧</span></span></div></div>';
+  h += '<div class="col" style="gap:8px"><div class="sub" style="font-weight:700;color:var(--ink)">历史记录</div>';
+  S.entries.forEach(function (e) {
+    h += '<div class="card col" style="gap:6px"><div class="between"><span class="row" style="gap:6px">'+face(e.mood,18)+'<span class="sub" style="font-weight:600;color:var(--ink)">'+esc(e.date)+" · "+MOODS[e.mood].label+'</span></span><span class="mut">担忧 '+e.worry+" · 信心 "+e.confidence+"</span></div>"+(e.note ? '<div class="sub">'+esc(e.note)+"</div>" : "")+"</div>";
+  });
+  h += '</div><div class="mut">记录仅用于自我觉察，不能替代专业评估。</div></div>';
+  return h;
+}
+function viewDiscover() {
+  var h = '<div class="col fade"><div class="row">';
+  h += '<button class="chip '+(S.disc==="stories"?"on":"")+'" data-act="disc" data-arg="stories">真实故事</button>';
+  h += '<button class="chip '+(S.disc==="videos"?"on":"")+'" data-act="disc" data-arg="videos">视频短片</button>';
+  h += '<button class="chip '+(S.disc==="science"?"on":"")+'" data-act="disc" data-arg="science">心理科普</button></div>';
+  if (S.disc === "stories") {
+    h += '<div class="mut">以下案例均整理自公开报道，来源附在文末。</div>';
+    STORIES.forEach(function (s) {
+      h += '<button class="card col storybtn" data-act="story" data-arg="'+s.id+'"><div class="between"><span class="row" style="gap:6px;color:var(--brand)">'+I(P[s.icon],16)+'<span class="mut" style="color:var(--brand)">'+s.kind+'</span></span><span class="mut">'+I(P.chev,14)+'</span></div><div class="sub" style="font-weight:700;color:var(--ink)">'+s.title+'</div><div class="mut">'+s.meta+'</div><div class="sub">'+s.quote+"</div></button>";
+    });
+  } else if (S.disc === "videos") {
+    h += '<div class="mut">视频来自哔哩哔哩，点击即可播放；版权归原作者所有。</div>';
+    VIDEOS.forEach(function (v) {
+      h += '<button class="card col storybtn" data-act="video" data-arg="'+v.id+'"><div class="between"><span class="row" style="gap:6px;color:var(--brand)">'+I(P.video,16)+'<span class="mut" style="color:var(--brand)">视频 · '+v.dur+'</span></span><span class="mut">'+I(P.chev,14)+'</span></div><div class="sub" style="font-weight:700;color:var(--ink)">'+v.title+'</div><div class="mut">UP 主：'+v.up+'</div><div class="sub">'+v.intro+"</div></button>";
+    });
+  } else {
+    ARTICLES.forEach(function (a) {
+      h += '<button class="card col storybtn" data-act="article" data-arg="'+a.id+'"><div class="between"><span class="row" style="gap:6px;color:var(--brand)">'+I(P.book,16)+'<span class="mut" style="color:var(--brand)">心理科普</span></span><span class="mut">'+I(P.chev,14)+'</span></div><div class="sub" style="font-weight:700;color:var(--ink)">'+a.title+'</div><div class="mut">'+a.intro+"</div></button>";
+    });
+  }
+  return h + "</div>";
+}
+function botBubble(m) {
+  var h = '<div class="bubble bot">';
+  if (m.lead) h += "<div>"+esc(m.lead)+"</div>";
+  if (m.dos) h += '<div class="col" style="gap:4px"><span class="mut" style="color:var(--green);font-weight:700">可以这样回应</span>'+lis(m.dos,"var(--green)")+"</div>";
+  if (m.avoid) h += '<div class="col" style="gap:4px"><span class="mut" style="color:var(--danger);font-weight:700">尽量避免</span>'+lis(m.avoid,"var(--danger)")+"</div>";
+  if (m.say) h += '<div class="quote">「'+esc(m.say)+"」</div>";
+  if (m.follow) h += '<div class="sub">'+esc(m.follow)+"</div>";
+  if (m.sit) h += '<button class="chip" style="align-self:flex-start" data-act="sitdetail" data-arg="'+m.sit+'">查看该情境的沟通要点</button>';
+  if (m.crisis) h += '<button class="btn danger" style="align-self:flex-start;padding:8px 14px" data-act="sup" data-arg="help">查看专业求助资源</button>';
+  return h + "</div>";
+}
+function viewSupport() {
+  var h = '<div class="col fade"><div class="row">';
+  h += '<button class="chip '+(S.sup==="talk"?"on":"")+'" data-act="sup" data-arg="talk">沟通支持</button>';
+  h += '<button class="chip '+(S.sup==="help"?"on":"")+'" data-act="sup" data-arg="help">求助资源</button></div>';
+  if (S.sup === "talk") {
+    h += '<div class="row">';
+    ROLES.forEach(function (r) { h += '<button class="chip '+(S.role===r.key?"on":"")+'" data-act="role" data-arg="'+r.key+'">'+r.label+"</button>"; });
+    h += "</div>";
+    h += '<div class="col" style="gap:10px">';
+    S.chat.msgs.forEach(function (m) { h += m.who === "user" ? '<div class="bubble user">'+esc(m.text)+"</div>" : botBubble(m); });
+    if (S.chatBusy) h += '<div class="typing">正在输入…</div>';
+    h += "</div>";
+    h += '<div class="chatq">';
+    CHAT_CHIPS[S.role].forEach(function (c) { h += '<button class="chip" data-act="chip" data-arg="'+esc(c)+'">'+esc(c)+"</button>"; });
+    h += "</div>";
+    h += '<div class="composer"><input id="chatin" data-field="chatdraft" value="'+esc(S.chatDraft)+'" placeholder="说说具体情况，或点上面的快捷提问…" maxlength="300" enterkeyhint="send"><button class="btn" data-act="send"'+(S.chatBusy?" disabled":"")+">发送</button></div>";
+    h += '<div class="mut">内置应答演示 · 非云端 AI · 对话仅保存在本页 · 不能替代专业心理帮助</div>';
+  } else {
+    h += '<div class="card col" style="background:var(--warn-bg);gap:6px"><div class="sub" style="font-weight:700;color:var(--warn)">出现这些情况，请尽快求助</div>'+lis(HELP_SIGNS,"var(--warn)")+"</div>";
+    HELP_PATHS.forEach(function (p) {
+      h += '<div class="card row" style="gap:10px;align-items:flex-start"><span style="color:var(--brand)">'+I(P[p.icon])+'</span><div class="col" style="gap:3px"><span class="mut">'+p.step+'</span><span class="sub" style="font-weight:700;color:var(--ink)">'+p.title+'</span><span class="mut" style="color:var(--sub)">'+p.desc+"</span></div></div>";
+    });
+    h += '<div class="card" style="background:var(--danger-bg)"><div class="sub" style="color:var(--danger);line-height:1.7">若出现紧急危险（如伤害自己的冲动），请立即告诉身边的大人，拨打 120 / 110，或前往最近的医院急诊。</div></div>';
+    h += '<div class="mut">求助不是软弱，而是康复的一部分。</div>';
+  }
+  return h + "</div>";
+}
+function viewDetail() {
+  var h = '<div class="col fade">';
+  if (S.detail.kind === "story") {
+    var s = STORIES.filter(function (x) { return x.id === S.detail.id; })[0];
+    h += '<div class="row"><span class="chip on" style="cursor:default">'+s.kind+"</span></div>";
+    h += '<div class="h">'+s.title+'</div><div class="mut">'+s.meta+'</div><div class="quote">'+s.quote+"</div>";
+    s.body.forEach(function (p) { h += '<div class="para">'+esc(p)+"</div>"; });
+    h += '<div class="card col"><div class="sub" style="font-weight:700;color:var(--ink)">这段经历里，帮到我的事</div>'+lis(s.helped,"var(--brand)")+"</div>";
+    h += '<div class="card col" style="gap:6px"><div class="sub" style="font-weight:700;color:var(--ink)">报道来源</div>';
+    s.sources.forEach(function (src) { h += '<a class="src" href="'+src.url+'" target="_blank" rel="noopener">'+esc(src.label)+"</a>"; });
+    h += '<div class="mut">案例根据公开报道整理，不构成医疗建议；康复请遵医嘱。</div></div>';
+    h += '<button class="btn" data-act="tab" data-arg="journal">看完想记一笔？去记录</button>';
+  } else if (S.detail.kind === "video") {
+    var v = VIDEOS.filter(function (x) { return x.id === S.detail.id; })[0];
+    h += '<div class="row"><span class="chip on" style="cursor:default">视频短片</span></div>';
+    h += '<div class="h">'+v.title+'</div><div class="mut">UP 主：'+v.up+" · "+v.dur+" · 来源：哔哩哔哩</div>";
+    h += '<div class="videobox"><iframe src="https://player.bilibili.com/player.html?bvid='+v.bvid+'&page=1&autoplay=0&danmaku=0&high_quality=1" allowfullscreen scrolling="no" frameborder="0"></iframe></div>';
+    h += '<div class="sub">'+v.intro+"</div>";
+    h += '<a class="src" href="https://www.bilibili.com/video/'+v.bvid+'" target="_blank" rel="noopener">播放不了？点这里在 B 站打开 →</a>';
+    h += '<div class="mut">视频版权归原作者所有；若限制站外播放，请使用上方链接。科普内容仅供参考，具体康复请遵医嘱。</div>';
+  } else if (S.detail.kind === "sit") {
+    var sit = SITUATIONS.filter(function (x) { return x.id === S.detail.id; })[0];
+    h += '<div class="row"><span class="chip on" style="cursor:default">沟通要点</span></div>';
+    h += '<div class="h">'+sit.title+"</div>";
+    h += '<div class="card col"><div class="col" style="gap:4px"><span class="mut" style="color:var(--green);font-weight:700">可以这样回应</span>'+lis(sit.dos,"var(--green)")+'</div><div class="col" style="gap:4px"><span class="mut" style="color:var(--danger);font-weight:700">尽量避免</span>'+lis(sit.avoid,"var(--danger)")+'</div><div class="quote">「'+esc(sit.say)+"」</div></div>";
+    h += '<button class="btn quiet" data-act="back">回到对话</button>';
+  } else {
+    var a = ARTICLES.filter(function (x) { return x.id === S.detail.id; })[0];
+    h += '<div class="row"><span class="chip on" style="cursor:default">心理科普</span></div>';
+    h += '<div class="h">'+a.title+'</div><div class="sub">'+a.intro+"</div>";
+    a.sections.forEach(function (sec) { h += '<div class="card col"><div class="sub" style="font-weight:700;color:var(--ink)">'+sec.h+"</div>"+lis(sec.items,"var(--brand)")+"</div>"; });
+    h += '<div class="mut">科普内容不能替代专业评估。持续困扰请查看「支持 → 求助资源」。</div>';
+  }
+  return h + "</div>";
+}
+function detailTitle() {
+  var d = S.detail;
+  if (d.kind === "story") return STORIES.filter(function (x) { return x.id === d.id; })[0].title;
+  if (d.kind === "video") return VIDEOS.filter(function (x) { return x.id === d.id; })[0].title;
+  if (d.kind === "sit") return SITUATIONS.filter(function (x) { return x.id === d.id; })[0].title;
+  return ARTICLES.filter(function (x) { return x.id === d.id; })[0].title;
+}
+function render() {
+  var title = S.detail ? detailTitle() : TITLES[S.tab];
+  var nav = "";
+  if (S.detail) nav += '<button class="back" data-act="back" aria-label="返回">'+I(P.back,18)+"</button>";
+  nav += "<h1>"+esc(title)+'</h1><span class="capsule">'+I(P.dots,14)+'<span class="div"></span>'+I(P.mini,14)+"</span>";
+  document.getElementById("nav").innerHTML = nav;
+  var body = S.detail ? viewDetail() : S.tab === "home" ? viewHome() : S.tab === "check" ? viewCheck() : S.tab === "journal" ? viewJournal() : S.tab === "discover" ? viewDiscover() : S.tab === "account" ? viewAccount() : viewSupport();
+  var main = document.getElementById("main");
+  main.innerHTML = body;
+  if (S.tab === "support" && S.sup === "talk" && !S.detail) {
+    main.scrollTop = main.scrollHeight;
+    if (S.chatFocus) { var inp = document.getElementById("chatin"); if (inp) inp.focus(); S.chatFocus = false; }
+  } else main.scrollTop = 0;
+  var tb = "";
+  TABS.forEach(function (t) { tb += '<button class="'+(S.tab===t.key&&!S.detail?"on":"")+'" data-act="tab" data-arg="'+t.key+'">'+I(P[t.icon])+"<span>"+t.label+"</span></button>"; });
+  document.getElementById("tabbar").innerHTML = tb;
+}
+function openModule(key) {
+  S.detail = null;
+  if (key === "check") S.tab = "check";
+  else if (key === "journal") S.tab = "journal";
+  else if (key === "stories") { S.tab = "discover"; S.disc = "stories"; }
+  else if (key === "science") { S.tab = "discover"; S.disc = "science"; }
+  else if (key === "talk") { S.tab = "support"; S.sup = "talk"; }
+  else if (key === "help") { S.tab = "support"; S.sup = "help"; }
+  render();
+}
+function matchTopic(text) {
+  var best = null, bestScore = 0;
+  CHAT_TOPICS.forEach(function (t) {
+    var score = 0;
+    t.kws.forEach(function (k) { if (text.indexOf(k) !== -1) score++; });
+    if (score > bestScore) { best = t; bestScore = score; }
+  });
+  return best;
+}
+function chatReply(text) {
+  var lower = text.toLowerCase();
+  if (/不想活|想死|自杀|自伤|伤害自己|割腕|活着没意思|结束生命/.test(lower)) {
+    S.chat.lastTopic = null; S.chat.depth = 0;
+    return { who:"bot", crisis:true,
+      lead:"谢谢你告诉我这些。这句话很重要，我会认真对待。如果你或孩子现在有伤害自己的念头，请现在就行动，不要等待：",
+      dos:["立即陪在他身边，不要让他独处，收好危险物品","马上联系家长、学校心理老师或医生，不要替他保密","拨打 12356 心理援助热线；有紧急危险时拨打 120 / 110"],
+      follow:"这不是软弱，也不是「想不开」，而是需要专业帮助的时刻。你愿意现在就去联系身边的人吗？" };
+  }
+  if (/谢谢|感谢|有用|帮到我/.test(lower)) {
+    return { who:"bot", lead:"不客气。陪伴本身就是最有力量的支持。之后遇到新的情况，随时回来聊。也记得照顾好你自己的情绪。" };
+  }
+  if (/^(你好|在吗|hi|hello|您好)[!！。？?]*$/.test(lower)) {
+    return { who:"bot", lead:CHAT_GREET[S.role], follow:CHAT_HINT[S.role] };
+  }
+  var t = matchTopic(lower);
+  if (t && t.id === S.chat.lastTopic && S.chat.depth >= 1) t = null;
+  if (!t && S.chat.lastTopic && (text.length <= 15 || /嗯|然后|还有|继续|具体|怎么办|呢|吗/.test(lower))) {
+    var prev = CHAT_TOPICS.filter(function (x) { return x.id === S.chat.lastTopic; })[0];
+    if (prev) { S.chat.depth = 2; return { who:"bot", lead:"我们再往深走一步：", dos:prev.more, follow:"试了之后情况怎么样？随时回来告诉我，我们再调整。" }; }
+  }
+  if (t) {
+    S.chat.lastTopic = t.id; S.chat.depth = 1;
+    var sitId = t.sit && t.sit[S.role] ? t.sit[S.role] : null;
+    return { who:"bot", lead:t.lead, dos:t.dos, avoid:t.avoid, say:t.say[S.role], follow:t.follow, sit:sitId };
+  }
+  return { who:"bot", lead:"我听到了，这确实不容易。能多说一点吗：这种情况持续多久了？你最希望改变的是什么？", follow:"也可以点下面的快捷提问，或直接描述一个具体场景，比如「孩子练完回来就发脾气」。" };
+}
+function chatSend(text) {
+  text = String(text || "").trim();
+  if (!text || S.chatBusy) return;
+  S.chat.msgs.push({ who:"user", text:text });
+  if (S.chat.msgs.length > 60) S.chat.msgs = S.chat.msgs.slice(-60);
+  S.chatBusy = true; S.chatDraft = ""; S.chatFocus = true;
+  render();
+  setTimeout(function () {
+    S.chat.msgs.push(chatReply(text));
+    S.chatBusy = false;
+    render();
+  }, 550 + Math.random() * 450);
+}
+/* ===== 账号与访问：只调用同源的站点 Function，页面里没有任何密钥 ===== */
+var API = "/functions/v1/app";
+var AUTH_MSG = {
+  invalid_username:"用户名需要 3–32 个字符，只能用字母、数字、下划线或减号，并且以字母或数字开头。",
+  password_too_short:"密码太短了：普通账号至少 10 个字符，管理员至少 15 个。",
+  invalid_password:"密码格式不正确（不能为空，且不超过约 250 个字符）。",
+  invalid_input:"填写内容有格式问题，请检查后重试。",
+  invalid_credentials:"用户名或密码不正确。",
+  username_taken:"这个用户名已经被占用了，换一个试试。",
+  rate_limited:"短时间内尝试次数太多，请稍后再试。",
+  origin_forbidden:"请求来源不被允许，请直接从网站地址打开页面。",
+  login_required:"请先登录。",
+  forbidden:"这个操作需要管理员身份。",
+  registration_unconfirmed:"注册结果暂时无法确认。请稍后用同一个用户名再登录一次：能登进去就说明账号已经建好了。",
+  admin_setup_unconfirmed:"管理员账号设置结果无法确认，请稍后重新打开本页核对。",
+  session_unavailable:"暂时无法建立会话，请稍后再试。",
+  logout_unconfirmed:"退出结果无法确认，请稍后重试。",
+  limiter_unavailable:"安全限流服务暂不可用，为了保护账号暂不放行，请稍后再试。",
+  limiter_busy:"操作过于频繁，请稍后再试。",
+  payload_too_large:"填写的内容太长了。",
+  database_unavailable:"服务暂时不可用，请稍后再试。",
+  service_unavailable:"服务暂时不可用，请稍后再试。"
+};
+function authFail(data) {
+  var code = data && data.error ? data.error : "unknown";
+  return AUTH_MSG[code] || ("操作没有成功（" + code + "），请稍后再试。");
+}
+function api(path, body) {
+  var init = body === undefined
+    ? { method:"GET", credentials:"same-origin" }
+    : { method:"POST", credentials:"same-origin", headers:{ "content-type":"application/json" }, body:JSON.stringify(body) };
+  if (window.demoHit && window.demoHit.active) return window.demoHit(path, body);
+  var request;
+  try { request = fetch(API + path, init); } catch (error) { return window.demoHit(path, body); }
+  return request.then(function (r) {
+    return r.json().then(function (d) {
+      // 返回体不是 JSON 对象 = 这里没有站点 Function（本地文件或静态托管），切本机演示。
+      if (d === null || typeof d !== "object") return window.demoHit(path, body);
+      return { status:r.status, data:d };
+    }, function () { return window.demoHit(path, body); });
+  }, function () { return window.demoHit(path, body); });
+}
+function authSay(text, bad) { S.authMsg = { text:text, bad:bad !== false }; }
+// 页面加载只做一件事：读当前状态；没有账号也没有游客凭据时，静默建一个游客会话。
+function authBoot() {
+  api("/api/session").then(function (res) {
+    if (res.status !== 200 || !res.data || !("user" in res.data)) return;
+    S.auth.ready = true;
+    S.auth.user = res.data.user || null;
+    S.auth.guest = !!res.data.guest;
+    if (S.auth.user || S.auth.guest) { render(); return; }
+    api("/api/guest", {}).then(function (g) {
+      if (g.status === 201) S.auth.guest = true;
+      render();
+    }, function () {});
+  }, function () {});
+}
+function authSubmit(kind) {
+  if (S.authBusy) return;
+  var d = S.authDraft;
+  S.authBusy = true; S.authMsg = null; render();
+  var body = kind === "register"
+    ? { username:d.username, password:d.password, role_label:d.role_label }
+    : { username:d.username, password:d.password };
+  api(kind === "register" ? "/api/register" : "/api/login", body).then(function (res) {
+    S.authBusy = false;
+    if ((res.status === 200 || res.status === 201) && res.data && res.data.user) {
+      S.auth.ready = true;
+      S.auth.user = res.data.user; S.auth.guest = false;
+      S.authDraft = { username:"", password:"", role_label:"" };
+      authSay(res.data.user.username + "，你好。你的每次进入都会记在这个账号名下。", false);
+    } else authSay(authFail(res.data));
+    render();
+  }, function () {
+    S.authBusy = false;
+    authSay("没连上服务端，这次操作没有完成。情绪记录仍然保存在这台设备上。");
+    render();
+  });
+}
+function authLogout() {
+  if (S.authBusy) return;
+  S.authBusy = true; S.authMsg = null; render();
+  api("/api/logout", {}).then(function (res) {
+    S.authBusy = false;
+    if (res.status === 200) {
+      S.auth.user = null; S.auth.guest = false;
+      authSay("已退出。这台设备仍可作为游客继续使用。", false);
+      render();
+      // 退出后重新拿一个游客凭据，否则页面会停在「什么身份都没有」的状态。
+      api("/api/guest", {}).then(function (g) {
+        if (g.status === 201) S.auth.guest = true;
+        render();
+      }, function () {});
+      return;
+    }
+    authSay(authFail(res.data));
+    render();
+  }, function () { S.authBusy = false; authSay("退出请求没有送达，请稍后重试。"); render(); });
+}
+function fmtTime(iso) {
+  var t = Date.parse(iso);
+  if (!isFinite(t)) return "—";
+  var d = new Date(t);
+  function p(n) { return (n < 10 ? "0" : "") + n; }
+  return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
+}
+function accountCard() {
+  var u = S.auth.user;
+  var h = '<div class="card col" style="gap:8px">';
+  h += '<div class="between"><span class="sub" style="font-weight:700">' + (u ? "已登录：" + esc(u.username) : (S.auth.guest ? "游客访问中" : "账号与访问")) + "</span>";
+  h += '<button class="chip" data-act="tab" data-arg="account">' + (u ? "账号详情" : "登录 / 注册") + "</button></div>";
+  if (!S.auth.ready) h += '<span class="mut">当前预览环境没有连上账号服务，全部功能仍可正常使用。</span>';
+  else if (u) h += '<span class="mut">身份：' + esc(u.role_label) + " · 累计进入 " + (u.login_count || 0) + " 次 · 最近 " + fmtTime(u.last_login_at) + "</span>";
+  else h += '<span class="mut">不用填任何东西，现在就能用。注册后可以把自己的进入记录归到账号名下；情绪记录仍然只保存在这台设备。</span>';
+  return h + "</div>";
+}
+function viewAccount() {
+  var u = S.auth.user, d = S.authDraft, mode = S.authMode;
+  var h = '<div class="col fade">';
+  h += '<div class="card col" style="gap:6px">' + (u
+    ? '<div class="between"><span class="h">' + esc(u.username) + '</span><span class="chip on" style="cursor:default">' + esc(u.role_label) + "</span></div>"
+      + '<span class="mut">账号类型：' + (u.role === "admin" ? "管理员" : "普通用户") + "</span>"
+      + '<span class="mut">注册时间：' + fmtTime(u.created_at) + "</span>"
+      + '<span class="mut">最近进入：' + fmtTime(u.last_login_at) + " · 累计 " + (u.login_count || 0) + " 次</span>"
+    : '<span class="h">' + (S.auth.guest ? "游客访问中" : "未登录") + "</span>"
+      + '<span class="mut">' + (S.auth.ready ? "游客状态下所有功能都可用。注册只是把你的进入记录归到一个账号名下。" : "当前预览环境没有连上账号服务，功能不受影响。") + "</span>")
+    + "</div>";
+  if (u) {
+    h += '<button class="btn quiet" data-act="logout"' + (S.authBusy ? " disabled" : "") + ">" + (S.authBusy ? "正在处理…" : "退出登录") + "</button>";
+  } else if (S.auth.ready) {
+    h += '<div class="card col" style="gap:9px">';
+    h += '<div class="row" style="gap:6px"><button class="chip' + (mode === "login" ? " on" : "") + '" data-act="authmode" data-arg="login">登录</button>'
+      + '<button class="chip' + (mode === "register" ? " on" : "") + '" data-act="authmode" data-arg="register">注册新账号</button></div>';
+    h += '<div class="col" style="gap:4px"><span class="mut">用户名（3–32 位字母、数字、_ 或 -）</span>'
+      + '<input id="authuser" data-field="auth.username" data-enter="' + mode + '" value="' + esc(d.username) + '" autocomplete="username" maxlength="40" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:inherit;font-size:13px;background:#FAF8F3;color:var(--ink)"></div>';
+    h += '<div class="col" style="gap:4px"><span class="mut">密码（至少 10 个字符）</span>'
+      + '<input id="authpass" type="password" data-field="auth.password" data-enter="' + mode + '" value="' + esc(d.password) + '" autocomplete="' + (mode === "login" ? "current-password" : "new-password") + '" maxlength="64" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:inherit;font-size:13px;background:#FAF8F3;color:var(--ink)"></div>';
+    if (mode === "register") {
+      var labels = ["家长","老师","教练","其它"];
+      h += '<div class="col" style="gap:6px"><span class="mut">你的身份（可选）</span><div class="row" style="flex-wrap:wrap;gap:6px">';
+      labels.forEach(function (label) {
+        h += '<button class="chip' + (d.role_label === label ? " on" : "") + '" data-act="authrole" data-arg="' + label + '">' + label + "</button>";
+      });
+      h += "</div></div>";
+    }
+    h += '<button class="btn" data-act="authsubmit" data-arg="' + mode + '"' + (S.authBusy ? " disabled" : "") + ">"
+      + (S.authBusy ? "正在处理…" : (mode === "login" ? "进入" : "创建账号并进入")) + "</button>";
+    if (mode === "register") h += '<span class="mut">密码只用于校验你的身份：服务端保存的是加盐派生结果，任何人都读不回明文。</span>';
+    h += "</div>";
+  } else {
+    h += '<div class="card col"><span class="sub">账号服务当前不可用（本地文件预览或未部署后端）。网页版部署后即可注册、登录并记录访问。</span></div>';
+  }
+  if (S.authMsg) h += '<div class="card col" style="border-color:' + (S.authMsg.bad ? "var(--danger)" : "var(--brand)") + ';background:' + (S.authMsg.bad ? "var(--danger-bg)" : "var(--brand-soft)") + '"><span class="sub" style="color:' + (S.authMsg.bad ? "var(--danger)" : "var(--brand-deep)") + '">' + esc(S.authMsg.text) + "</span></div>";
+  h += '<div class="card col" style="gap:6px"><span class="sub" style="font-weight:700">这个账号会记录什么</span>'
+    + lis(["进入时间、用户名（或游客凭据）、大致网络地址段与设备类型","管理员页面可以按天看到进入次数与账号列表","情绪记录、自查结果和对话内容不会上传，只保存在你打开的这个浏览器里"], "var(--brand)")
+    + "</div>";
+  return h + "</div>";
+}
+document.addEventListener("click", function (e) {
+  var el = e.target.closest ? e.target.closest("[data-act]") : null;
+  if (!el) return;
+  var act = el.getAttribute("data-act"), arg = el.getAttribute("data-arg");
+  if (act === "tab") { S.tab = arg; S.detail = null; render(); }
+  else if (act === "mod") openModule(arg);
+  else if (act === "hmood") { S.mood = +arg; S.tab = "journal"; render(); }
+  else if (act === "jmood") { S.mood = +arg; S.saved = false; render(); }
+  else if (act === "start") { S.answers = []; S.quiz = 0; render(); }
+  else if (act === "opt") { S.answers[S.quiz] = +arg; S.quiz = S.quiz < QUESTIONS.length - 1 ? S.quiz + 1 : QUESTIONS.length; render(); }
+  else if (act === "prevq") { S.quiz = S.quiz - 1; render(); }
+  else if (act === "retake") { S.answers = []; S.quiz = -1; render(); }
+  else if (act === "disc") { S.disc = arg; render(); }
+  else if (act === "sup") { S.sup = arg; S.detail = null; render(); }
+  else if (act === "role") {
+    S.role = arg; S.openSit = null;
+    S.chat = { msgs:[{ who:"bot", lead:CHAT_GREET[arg], follow:CHAT_HINT[arg] }], lastTopic:null, depth:0 };
+    render();
+  }
+  else if (act === "sit") { S.openSit = S.openSit === arg ? null : arg; render(); }
+  else if (act === "sitdetail") { S.detail = { kind:"sit", id:arg }; render(); }
+  else if (act === "story") { S.detail = { kind:"story", id:arg }; render(); }
+  else if (act === "video") { S.detail = { kind:"video", id:arg }; render(); }
+  else if (act === "article") { S.detail = { kind:"article", id:arg }; render(); }
+  else if (act === "back") { S.detail = null; render(); }
+  else if (act === "authmode") { S.authMode = arg; S.authMsg = null; render(); }
+  else if (act === "authrole") { S.authDraft.role_label = S.authDraft.role_label === arg ? "" : arg; render(); }
+  else if (act === "authsubmit") authSubmit(arg);
+  else if (act === "logout") authLogout();
+  else if (act === "chip") chatSend(arg);
+  else if (act === "send") chatSend(S.chatDraft);
+  else if (act === "save") {
+    var d = new Date();
+    S.entries.unshift({ id:Date.now(), date:(d.getMonth()+1)+"/"+d.getDate(), mood:S.mood, worry:S.worry, confidence:S.confidence, note:S.note });
+    S.entries = S.entries.slice(0, 14);
+    try { localStorage.setItem("xl-entries-v1", JSON.stringify(S.entries)); } catch (err) {}
+    S.note = ""; S.saved = true; render();
+  }
+});
+document.addEventListener("input", function (e) {
+  var el = e.target, f = el.getAttribute && el.getAttribute("data-field");
+  if (!f) return;
+  if (f.indexOf("auth.") === 0) { S.authDraft[f.slice(5)] = el.value; return; }
+  if (f === "chatdraft") { S.chatDraft = el.value; return; }
+  if (f === "note") { S.note = el.value; S.saved = false; return; }
+  S[f] = +el.value; S.saved = false;
+  var out = document.querySelector('[data-out="'+f+'"]');
+  if (out) out.textContent = el.value;
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Enter" || !e.target || !e.target.getAttribute) return;
+  if (e.target.id === "chatin") { e.preventDefault(); chatSend(S.chatDraft); return; }
+  var enter = e.target.getAttribute("data-enter");
+  if (enter) { e.preventDefault(); authSubmit(enter); }
+});
+render();
+authBoot();
+</script>
+</body>
+</html>

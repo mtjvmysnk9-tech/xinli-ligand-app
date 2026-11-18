@@ -1,0 +1,49 @@
+<view class="page">
+  <block wx:if="{{stage === 'intro'}}">
+    <view class="card col center" style="align-items:center;padding:40rpx;gap:20rpx">
+      <view class="badge-lg">查</view>
+      <view class="h">心理状态自查</view>
+      <view class="sub">8 个简单问题，帮你留意受伤后的心理变化。没有对错，按最近两周的真实感受选择。</view>
+      <view class="mut" style="background:#EFECE4;border-radius:999rpx;padding:8rpx 20rpx">约 2 分钟 · 不是医学诊断</view>
+    </view>
+    <button class="btn" bindtap="start">开始自查</button>
+    <view class="mut">结果只用于自我觉察。若持续困扰，请查看「支持 → 求助资源」。</view>
+  </block>
+
+  <block wx:elif="{{stage === 'quiz'}}">
+    <view class="between">
+      <text class="mut">第 {{q + 1}} / {{total}} 题</text>
+      <button class="chip" bindtap="prevq">上一题</button>
+    </view>
+    <view class="pbar"><view style="width:{{progress}}%"></view></view>
+    <view class="card" style="padding:32rpx">
+      <view class="sub" style="font-weight:700;font-size:28rpx;line-height:1.7;color:#22333B">{{question}}</view>
+    </view>
+    <view class="col">
+      <button wx:for="{{options}}" wx:key="*this" class="opt" data-v="{{index}}" bindtap="opt">
+        <view class="between"><text>{{item}}</text><text class="mut">{{index}} 分</text></view>
+      </button>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="card col center" style="align-items:center;padding:36rpx;gap:16rpx;background:{{result.bg}}">
+      <view class="mut">自查得分 {{score}} / 24</view>
+      <view class="h" style="color:{{result.color}};font-size:40rpx">{{result.label}}</view>
+      <view class="sub">{{result.desc}}</view>
+    </view>
+    <view class="card col">
+      <view class="sub" style="font-weight:700;color:#22333B">给你的小建议</view>
+      <view wx:for="{{result.tips}}" wx:key="*this" class="li">
+        <view class="dot" style="background:{{result.color}}"></view><text>{{item}}</text>
+      </view>
+    </view>
+    <view class="grid">
+      <button class="btn quiet" style="width:calc(50% - 10rpx)" bindtap="goJournal">去记录</button>
+      <button class="btn quiet" style="width:calc(50% - 10rpx)" bindtap="goScience">读科普</button>
+    </view>
+    <button wx:if="{{result.tone === 'danger'}}" class="btn danger" bindtap="goHelp">查看专业求助资源</button>
+    <button class="chip" style="align-self:center" bindtap="retake">重新自查</button>
+    <view class="mut">本自查不能替代专业评估。</view>
+  </block>
+</view>
