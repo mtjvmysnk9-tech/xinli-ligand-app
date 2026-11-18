@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>心里韧带 · 管理后台</title>
+<style>
+:root{
+  --brand:#2F9E8F; --brand-deep:#22806F; --brand-soft:#EAF6F3;
+  --bg:#F6F4EF; --card:#FFFFFF; --ink:#22333B; --sub:#51666F; --mut:#8A9BA3;
+  --line:#E5E1D8; --warm:#E9A23B; --blue:#7BA7C9;
+  --danger:#D64545; --danger-bg:#FBEDED;
+}
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.6 "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:16px 14px 40px;display:flex;flex-direction:column;gap:12px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 2px}
+.bar h1{font-size:17px;font-weight:700;margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.col{display:flex;flex-direction:column;gap:9px}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.h{font-size:15px;font-weight:700}
+.sub{font-size:12px;color:var(--sub)}
+.mut{font-size:11px;color:var(--mut)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:2px}
+.stat b{font-size:22px;line-height:1.2;color:var(--brand-deep)}
+.btn{border:none;border-radius:999px;padding:11px 16px;font-size:13px;font-weight:600;cursor:pointer;background:var(--brand);color:#fff}
+.btn.quiet{background:#EFECE4;color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:default}
+.chip{border-radius:999px;border:1px solid var(--line);padding:6px 14px;font-size:12px;cursor:pointer;background:var(--card);color:var(--sub)}
+.chip.on{background:var(--brand-soft);border-color:var(--brand);color:var(--brand-deep);font-weight:600}
+label{display:flex;flex-direction:column;gap:4px}
+input{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:inherit;font-size:13px;background:#FAF8F3;color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;color:var(--mut);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px;border-bottom:1px solid #F1EEE7;color:var(--sub);vertical-align:top}
+td.k{color:var(--ink);font-weight:600}
+.scroll{overflow-x:auto}
+.tag{display:inline-block;border-radius:999px;padding:1px 8px;font-size:11px;background:var(--brand-soft);color:var(--brand-deep)}
+.tag.guest{background:#F4F1EA;color:var(--sub)}
+.tag.admin{background:#FBF3E9;color:#B97D10}
+.note{border-left:3px solid var(--brand);background:#F4F1EA;border-radius:8px;padding:10px 12px;font-size:12px;color:var(--sub);line-height:1.7}
+.err{border-left:3px solid var(--danger);background:var(--danger-bg);color:var(--danger);border-radius:8px;padding:10px 12px;font-size:12px}
+.fade{animation:fade .18s ease-out}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.bars{display:flex;align-items:flex-end;gap:6px;height:110px}
+.bars .day{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.bars .stack{width:100%;max-width:34px;display:flex;flex-direction:column;justify-content:flex-end;gap:1px}
+.bars i{display:block;border-radius:2px}
+.bars span{font-size:10px;color:var(--mut)}
+@media (max-width:520px){ th.hide,td.hide{display:none} }
+</style>
+</head>
+<body>
+<div class="wrap" id="wrap"></div>
+<script>
+"use strict";
+var API = "/functions/v1/app";
+var MSG = {
+  invalid_username:"管理员用户名需要 3–32 个字符，只能用字母、数字、下划线或减号。",
+  password_too_short:"管理员密码至少 15 个字符。",
+  invalid_password:"密码格式不正确。",
+  invalid_input:"填写内容有格式问题，请检查后重试。",
+  invalid_credentials:"用户名或密码不正确。",
+  username_taken:"这个用户名已经被占用。",
+  already_seeded:"管理员已经设置过了，请直接登录。",
+  rate_limited:"尝试次数太多，请稍后再试。",
+  origin_forbidden:"请求来源不被允许，请从站点地址打开本页。",
+  login_required:"登录状态已失效，请重新登录。",
+  forbidden:"这个页面只允许管理员访问。",
+  admin_setup_unconfirmed:"管理员设置结果无法确认，请重新打开本页核对。",
+  session_unavailable:"暂时无法建立会话，请稍后再试。",
+  logout_unconfirmed:"退出结果无法确认，请稍后重试。",
+  database_unavailable:"服务暂时不可用，请稍后再试。",
+  service_unavailable:"服务暂时不可用，请稍后再试。"
+};
+function failText(data) {
+  var code = data && data.error ? data.error : "unknown";
+  return MSG[code] || ("操作没有成功（" + code + "）。");
+}
+function esc(s) { return String(s === null || s === undefined ? "—" : s).replace(/[&<>"']/g, function (c) { return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]; }); }
+function api(path, body) {
+  var init = body === undefined
+    ? { method:"GET", credentials:"same-origin" }
+    : { method:"POST", credentials:"same-origin", headers:{ "content-type":"application/json" }, body:JSON.stringify(body) };
+  return fetch(API + path, init).then(function (r) {
+    return r.json().then(function (d) { return { status:r.status, data:d }; }, function () { return { status:r.status, data:null }; });
+  });
+}
+function fmt(iso) {
+  var t = Date.parse(iso);
+  if (!isFinite(t)) return "—";
+  var d = new Date(t);
+  function p(n) { return (n < 10 ? "0" : "") + n; }
+  return (d.getMonth() + 1) + "/" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
+}
+var KIND = { account:"账号进入", guest:"游客进入", admin:"管理员登录", admin_setup:"管理员设置" };
+
+var S = { view:"loading", seeded:false, me:null, msg:null, busy:false, tab:"overview",
+  overview:null, users:null, events:null, draft:{ username:"", password:"", password2:"" } };
+
+function bar(label, value, sub) {
+  return '<div class="stat"><span class="mut">' + esc(label) + "</span><b>" + esc(value) + '</b><span class="mut">' + esc(sub || "") + "</span></div>";
+}
+function chart(days) {
+  var max = 1;
+  days.forEach(function (d) { max = Math.max(max, (d.account || 0) + (d.guest || 0) + (d.admin || 0)); });
+  var h = '<div class="bars">';
+  days.forEach(function (d) {
+    function seg(v, color) { return v ? '<i style="height:' + Math.max(3, Math.round(v / max * 78)) + 'px;background:' + color + '"></i>' : ""; }
+    h += '<div class="day"><div class="stack">' + seg(d.admin, "#B97D10") + seg(d.account, "#2F9E8F") + seg(d.guest, "#CFC9BC") + "</div>"
+      + '<span>' + esc(d.date.slice(5)) + "</span><span>" + ((d.account || 0) + (d.guest || 0) + (d.admin || 0)) + "</span></div>";
+  });
+  return h + "</div>";
+}
+function overviewView(o) {
+  var h = '<div class="stats">';
+  h += bar("注册账号", o.totals.accounts, "管理员 " + o.totals.admins + " 个");
+  h += bar("游客会话", o.totals.guests, "30 天内同一浏览器算 1 个");
+  h += bar("24 小时进入", o.last_24h.account_logins + o.last_24h.guest_visits, "账号 " + o.last_24h.account_logins + " · 游客 " + o.last_24h.guest_visits);
+  h += bar("7 天活跃账号", o.totals.active_accounts_7d, "最近 7 天登录过");
+  h += "</div>";
+  h += '<div class="card col"><div class="h">最近 7 天进入次数</div>' + chart(o.days)
+    + '<div class="row" style="gap:12px"><span class="mut"><i style="display:inline-block;width:8px;height:8px;background:#2F9E8F;border-radius:2px;margin-right:4px"></i>账号</span>'
+    + '<span class="mut"><i style="display:inline-block;width:8px;height:8px;background:#CFC9BC;border-radius:2px;margin-right:4px"></i>游客</span>'
+    + '<span class="mut"><i style="display:inline-block;width:8px;height:8px;background:#B97D10;border-radius:2px;margin-right:4px"></i>管理员</span></div>'
+    + '<div class="mut">按北京时间分日统计，来源为登录事件。</div></div>';
+  if (o.top_logins.length) {
+    h += '<div class="card col"><div class="h">最活跃的账号</div><div class="scroll"><table><thead><tr><th>用户名</th><th>身份</th><th>累计进入</th><th>最近</th></tr></thead><tbody>';
+    o.top_logins.forEach(function (r) {
+      h += "<tr><td class=\"k\">" + esc(r.username) + "</td><td>" + esc(r.role_label) + "</td><td>" + esc(r.login_count) + "</td><td>" + esc(fmt(r.last_login_at)) + "</td></tr>";
+    });
+    h += "</tbody></table></div></div>";
+  }
+  return h;
+}
+function usersView(rows) {
+  if (!rows.length) return '<div class="card"><span class="sub">还没有人注册。把网址发给家长或同学，注册后就会出现在这里。</span></div>';
+  var h = '<div class="card col"><div class="between"><span class="h">账号列表</span><span class="mut">共 ' + rows.length + " 个（最多显示 " + S.users.page_limit + " 条）</span></div><div class=\"scroll\"><table><thead><tr>"
+    + "<th>用户名</th><th class=\"hide\">身份</th><th>累计进入</th><th>最近</th><th class=\"hide\">注册</th></tr></thead><tbody>";
+  rows.forEach(function (r) {
+    h += "<tr><td class=\"k\">" + esc(r.username) + (r.role === "admin" ? ' <span class="tag admin">管理员</span>' : "") + "</td><td class=\"hide\">" + esc(r.role_label)
+      + "</td><td>" + esc(r.login_count) + "</td><td>" + esc(fmt(r.last_login_at)) + "</td><td class=\"hide\">" + esc(fmt(r.created_at)) + "</td></tr>";
+  });
+  return h + "</tbody></table></div></div>";
+}
+function eventsView(rows) {
+  if (!rows.length) return '<div class="card"><span class="sub">还没有访问记录。</span></div>';
+  var h = '<div class="card col"><div class="between"><span class="h">访问明细</span><span class="mut">最近 ' + rows.length + " 条</span></div><div class=\"scroll\"><table><thead><tr>"
+    + "<th>时间</th><th>方式</th><th>谁</th><th class=\"hide\">网络段</th><th class=\"hide\">设备</th></tr></thead><tbody>";
+  rows.forEach(function (r) {
+    var tag = r.kind === "guest" ? "guest" : (r.kind === "account" ? "" : "admin");
+    h += "<tr><td>" + esc(fmt(r.created_at)) + '</td><td><span class="tag ' + tag + '">' + esc(KIND[r.kind] || r.kind) + "</span></td>"
+      + "<td class=\"k\">" + (r.username ? esc(r.username) : '<span class="mut">游客</span>') + "</td>"
+      + '<td class="hide">' + esc(r.ip) + '</td><td class="hide">' + esc(r.user_agent ? String(r.user_agent).slice(0, 28) : "—") + "</td></tr>";
+  });
+  return h + "</tbody></table></div></div>";
+}
+function dashView() {
+  var h = '<div class="bar"><h1>心里韧带 · 管理后台</h1><div class="row" style="gap:6px">'
+    + '<button class="chip" data-act="export" data-arg="events">导出流水</button>'
+    + '<button class="chip" data-act="export" data-arg="users">导出账号</button>'
+    + '<button class="chip" data-act="export" data-arg="guests">导出游客</button>'
+    + '<button class="chip" data-act="refresh">刷新</button><button class="chip" data-act="logout">退出</button></div></div>';
+  h += '<div class="card row" style="justify-content:space-between"><span class="sub">已登录：' + esc(S.me.username) + ' · 管理员</span>'
+    + '<span class="mut">数据时间 ' + esc(fmt(S.overview ? S.overview.generated_at : "")) + "</span></div>";
+  h += '<div class="row" style="gap:6px">'
+    + '<button class="chip' + (S.tab === "overview" ? " on" : "") + '" data-act="tab" data-arg="overview">概览</button>'
+    + '<button class="chip' + (S.tab === "users" ? " on" : "") + '" data-act="tab" data-arg="users">账号</button>'
+    + '<button class="chip' + (S.tab === "events" ? " on" : "") + '" data-act="tab" data-arg="events">访问明细</button></div>';
+  if (S.tab === "overview") h += S.overview ? overviewView(S.overview) : '<div class="card"><span class="sub">正在读取…</span></div>';
+  if (S.tab === "users") h += S.users ? usersView(S.users.items) : '<div class="card"><span class="sub">正在读取…</span></div>';
+  if (S.tab === "events") h += S.events ? eventsView(S.events.items) : '<div class="card"><span class="sub">正在读取…</span></div>';
+  h += '<div class="note">这里只有进入记录（谁、什么时候、用什么方式进来）。情绪记录、自查答案和对话内容不会上传，因此在这个页面看不到——这是刻意的设计：它们留在每个人的手机里。<br>统计一次最多读取最近 500 条事件与 500 个账号。</div>';
+  return h;
+}
+function field(key, type, label, hint, autocomplete) {
+  return '<label><span class="mut">' + esc(label) + '</span><input id="f-' + key + '" type="' + type + '" data-key="' + key
+    + '" value="' + esc(S.draft[key]) + '" autocomplete="' + (autocomplete || "off") + '" maxlength="' + (key === "username" ? 40 : 80) + '">'
+    + (hint ? '<span class="mut">' + esc(hint) + "</span>" : "") + "</label>";
+}
+function gateView() {
+  var setup = S.view === "setup";
+  var h = '<div class="bar"><h1>心里韧带 · 管理后台</h1><span class="mut">' + (setup ? "首次设置" : "管理员登录") + "</span></div>";
+  h += '<div class="card col">' + field("username", "text", "管理员用户名", "3–32 位字母、数字、_ 或 -", "username");
+  h += field("password", "password", "管理员密码", setup ? "至少 15 个字符，建议用一句只有你记得住的话" : "", setup ? "new-password" : "current-password");
+  if (setup) h += field("password2", "password", "再输一遍密码", "", "new-password");
+  h += '<button class="btn" data-act="' + (setup ? "setup" : "login") + '"' + (S.busy ? " disabled" : "") + ">"
+    + (S.busy ? "正在处理…" : (setup ? "创建管理员账号" : "进入后台")) + "</button>";
+  if (S.seeded === false) h += '<button class="chip" data-act="gate">' + (setup ? "已经设置过了？切回登录" : "检测到还没有管理员：现在设置") + "</button>";
+  h += "</div>";
+  if (S.msg) h += '<div class="err">' + esc(S.msg) + "</div>";
+  h += '<div class="note">' + (setup
+    ? "这个页面只做一次事情：设定管理员用户名和密码。设置成功后，任何人再打开这个页面都只能登录，无法重复设置；密码在服务端保存的是加盐派生结果，无法还原成明文。"
+    : "管理员凭据与普通注册账号分开校验；连续输错会被限流。") + "</div>";
+  h += '<a class="mut" href="./" style="text-align:center">← 回到使用者页面</a>';
+  return h;
+}
+function loadingView(text) {
+  return '<div class="bar"><h1>心里韧带 · 管理后台</h1></div><div class="card"><span class="sub">' + esc(text) + "</span></div>";
+}
+function render() {
+  var h = '<div class="fade">';
+  if (S.view === "dash") h += dashView();
+  else if (S.view === "login" || S.view === "setup") h += gateView();
+  else if (S.view === "unavailable") {
+    h += '<div class="bar"><h1>心里韧带 · 管理后台</h1></div><div class="card col"><span class="h">后端未连接</span>'
+      + '<span class="sub">这个页面需要站点 Function 在线。请从已部署的站点地址打开（例如 https://…/admin.html），不要用本地文件直接打开。</span></div>';
+  } else h += loadingView(S.view === "booting2" ? "正在读取统计…" : "正在检查登录状态…");
+  document.getElementById("wrap").innerHTML = h + "</div>";
+}
+function loadDash(then) {
+  S.view = "dash";
+  return Promise.all([api("/api/session"), api("/api/admin/overview"), api("/api/admin/users"), api("/api/admin/events")])
+    .then(function (list) {
+      S.me = (list[0].data && list[0].data.user) || S.me || { username:"管理员" };
+      // 401 只说明没有管理员会话：还没设置过就进首次设置，否则进登录。
+      if (list[1].status === 401) { S.view = S.seeded ? "login" : "setup"; render(); return; }
+      if (list[1].status !== 200) { S.msg = failText(list[1].data); S.view = S.seeded ? "login" : "setup"; render(); return; }
+      S.overview = list[1].data; S.users = list[2].data; S.events = list[3].data;
+      render();
+      if (then) then();
+    });
+}
+function boot() {
+  api("/api/health").then(function (res) {
+    if (res.status !== 200) { S.view = "unavailable"; render(); return; }
+    return api("/api/admin/status").then(function (st) {
+      S.seeded = !!(st.data && st.data.seeded);
+      S.view = "booting2"; render();
+      return loadDash().catch(function () { S.view = "unavailable"; render(); });
+    });
+  }, function () { S.view = "unavailable"; render(); });
+}
+function submit(kind) {
+  if (S.busy) return;
+  var d = S.draft;
+  if (kind === "setup") {
+    if (d.password !== d.password2) { S.msg = "两次输入的密码不一致。"; render(); return; }
+    if ([...d.password].length < 15) { S.msg = "管理员密码至少 15 个字符。"; render(); return; }
+  }
+  S.busy = true; S.msg = null; render();
+  api(kind === "setup" ? "/api/admin/setup" : "/api/admin/login", { username:d.username, password:d.password })
+    .then(function (res) {
+      S.busy = false;
+      if ((res.status === 200 || res.status === 201) && res.data && res.data.user) {
+        S.me = res.data.user; S.draft = { username:"", password:"", password2:"" };
+        return loadDash();
+      }
+      if (res.status === 409 && res.data && res.data.error === "already_seeded") { S.seeded = true; S.view = "login"; }
+      S.msg = failText(res.data);
+      render();
+    }, function () { S.busy = false; S.msg = "没连上服务端，请稍后重试。"; render(); });
+}
+function logout() {
+  api("/api/admin/logout", {}).then(function () { S.me = null; S.overview = null; S.users = null; S.events = null; S.seeded = true; S.view = "login"; S.msg = "已退出管理后台。"; render(); });
+}
+function exportCsv(kind) {
+  var url = "/functions/v1/app/api/admin/export.csv?kind=" + encodeURIComponent(kind);
+  if (window.demoHit && window.demoHit.active && window.demoExport) {
+    var csv = window.demoExport(kind);
+    var blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = kind + "_" + Date.now() + ".csv";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    return;
+  }
+  fetch(url, { method: "GET", credentials: "same-origin" }).then(function (r) {
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return r.blob();
+  }).then(function (blob) {
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = kind + "_" + Date.now() + ".csv";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }).catch(function (err) {
+    S.msg = "导出失败：" + err.message;
+    render();
+  });
+}
+document.addEventListener("click", function (e) {
+  var el = e.target.closest ? e.target.closest("[data-act]") : null;
+  if (!el) return;
+  var act = el.getAttribute("data-act"), arg = el.getAttribute("data-arg");
+  if (act === "tab") { S.tab = arg; render(); }
+  else if (act === "refresh") { render(); loadDash(function () { S.msg = null; }); }
+  else if (act === "login") submit("login");
+  else if (act === "setup") submit("setup");
+  else if (act === "logout") logout();
+  else if (act === "export") exportCsv(arg);
+  else if (act === "gate") { S.view = S.view === "setup" ? "login" : "setup"; S.msg = null; render(); }
+});
+document.addEventListener("input", function (e) {
+  var key = e.target.getAttribute && e.target.getAttribute("data-key");
+  if (key) S.draft[key] = e.target.value;
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Enter") return;
+  if (S.view === "setup") { e.preventDefault(); submit("setup"); }
+  else if (S.view === "login") { e.preventDefault(); submit("login"); }
+});
+render();
+boot();
+</script>
+</body>
+</html>

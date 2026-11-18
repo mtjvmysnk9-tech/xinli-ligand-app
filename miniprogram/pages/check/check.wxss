@@ -1,0 +1,1 @@
+.badge-lg { width: 96rpx; height: 96rpx; border-radius: 28rpx; background: #EAF6F3; color: #22806F; font-size: 48rpx; font-weight: 700; display: flex; align-items: center; justify-content: center; }

@@ -1,0 +1,18 @@
+<view class="page" wx:if="{{sit}}">
+  <view class="h" style="font-size:32rpx;line-height:1.5">{{sit.title}}</view>
+  <view class="card col">
+    <view class="sub" style="font-weight:700;color:#22333B">可以这样做</view>
+    <view wx:for="{{sit.dos}}" wx:key="*this" class="li">
+      <view class="dot" style="background:#3BA55D"></view><text>{{item}}</text>
+    </view>
+  </view>
+  <view class="card col">
+    <view class="sub" style="font-weight:700;color:#22333B">尽量避免</view>
+    <view wx:for="{{sit.avoid}}" wx:key="*this" class="li">
+      <view class="dot" style="background:#D64545"></view><text>{{item}}</text>
+    </view>
+  </view>
+  <view class="quote">「{{sit.say}}」</view>
+  <button class="btn quiet" bindtap="back">回到对话</button>
+</view>
+<view wx:else class="page"><view class="mut center">没有找到这个情境</view></view>

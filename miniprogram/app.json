@@ -1,0 +1,34 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/check/check",
+    "pages/journal/journal",
+    "pages/discover/discover",
+    "pages/support/support",
+    "pages/story/story",
+    "pages/article/article",
+    "pages/situation/situation"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "心里韧带",
+    "backgroundColor": "#F6F4EF",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#8A9BA3",
+    "selectedColor": "#2F9E8F",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/home/home", "text": "首页" },
+      { "pagePath": "pages/check/check", "text": "自查" },
+      { "pagePath": "pages/journal/journal", "text": "记录" },
+      { "pagePath": "pages/discover/discover", "text": "发现" },
+      { "pagePath": "pages/support/support", "text": "支持" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

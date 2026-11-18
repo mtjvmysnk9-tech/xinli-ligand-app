@@ -1,0 +1,11 @@
+page { height: 100%; }
+.chatwrap { height: 100%; display: flex; flex-direction: column; }
+.head { padding: 20rpx 28rpx 12rpx; display: flex; flex-direction: column; gap: 16rpx; }
+.msgs { flex: 1; min-height: 0; }
+.msglist { padding: 12rpx 28rpx; display: flex; flex-direction: column; gap: 20rpx; }
+.foot { padding: 12rpx 28rpx calc(16rpx + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 12rpx; background: #F6F4EF; }
+.chatq { width: 100%; white-space: nowrap; }
+.qchip { flex: 0 0 auto; background: #FFFFFF; }
+.composer { display: flex; gap: 16rpx; align-items: center; }
+.chatin { flex: 1; min-width: 0; border: 1rpx solid #E5E1D8; border-radius: 999rpx; padding: 16rpx 28rpx; font-size: 26rpx; background: #FFFFFF; color: #22333B; }
+.send { padding: 16rpx 36rpx; flex: 0 0 auto; }

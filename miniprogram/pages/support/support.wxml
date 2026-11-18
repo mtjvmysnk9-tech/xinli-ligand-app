@@ -1,0 +1,71 @@
+<view class="chatwrap">
+  <view class="head">
+    <view class="chips">
+      <button class="chip {{sup === 'talk' ? 'on' : ''}}" data-k="talk" bindtap="onSup">沟通支持</button>
+      <button class="chip {{sup === 'help' ? 'on' : ''}}" data-k="help" bindtap="onSup">求助资源</button>
+    </view>
+    <view wx:if="{{sup === 'talk'}}" class="chips">
+      <button wx:for="{{roles}}" wx:key="key" class="chip {{role === item.key ? 'on' : ''}}" data-k="{{item.key}}" bindtap="onRole">{{item.label}}</button>
+    </view>
+  </view>
+
+  <block wx:if="{{sup === 'talk'}}">
+    <scroll-view class="msgs" scroll-y scroll-into-view="{{scrollInto}}" scroll-with-animation>
+      <view class="msglist">
+        <view wx:for="{{msgs}}" wx:key="id" id="{{item.id}}" class="bubble {{item.who}}">
+          <text wx:if="{{item.text}}">{{item.text}}</text>
+          <block wx:else>
+            <text>{{item.lead}}</text>
+            <view wx:if="{{item.dos}}" class="col" style="gap:8rpx">
+              <text class="mut" style="font-weight:700">可以这样回应</text>
+              <view wx:for="{{item.dos}}" wx:for-item="d" wx:key="*this" class="li">
+                <view class="dot" style="background:#3BA55D"></view><text>{{d}}</text>
+              </view>
+            </view>
+            <view wx:if="{{item.avoid}}" class="col" style="gap:8rpx">
+              <text class="mut" style="font-weight:700">尽量避免</text>
+              <view wx:for="{{item.avoid}}" wx:for-item="a" wx:key="*this" class="li">
+                <view class="dot" style="background:#D64545"></view><text>{{a}}</text>
+              </view>
+            </view>
+            <view wx:if="{{item.say}}" class="quote">「{{item.say}}」</view>
+            <text wx:if="{{item.follow}}" class="sub">{{item.follow}}</text>
+            <button wx:if="{{item.sit}}" class="chip" style="align-self:flex-start" data-id="{{item.sit}}" bindtap="onSit">查看该情境的沟通要点</button>
+            <button wx:if="{{item.crisis}}" class="btn danger" bindtap="onHelp">查看专业求助资源</button>
+          </block>
+        </view>
+        <view wx:if="{{busy}}" class="typing">正在输入…</view>
+      </view>
+    </scroll-view>
+    <view class="foot">
+      <scroll-view class="chatq" scroll-x>
+        <view class="row" style="gap:16rpx">
+          <button wx:for="{{chips}}" wx:key="*this" class="chip qchip" data-t="{{item}}" bindtap="onChip">{{item}}</button>
+        </view>
+      </scroll-view>
+      <view class="composer">
+        <input class="chatin" value="{{draft}}" maxlength="300" confirm-type="send" placeholder="描述一个具体场景…" bindinput="onDraft" bindconfirm="onConfirm"/>
+        <button class="btn send {{busy ? 'disabled' : ''}}" bindtap="onSend">发送</button>
+      </view>
+      <view class="mut center">内置应答演示 · 非云端 AI · 对话仅保存在本页 · 不能替代专业心理帮助</view>
+    </view>
+  </block>
+
+  <scroll-view wx:else class="msgs" scroll-y>
+    <view class="msglist">
+      <view class="card col">
+        <view class="sub" style="font-weight:700;color:#22333B">出现这些信号，请认真求助</view>
+        <view wx:for="{{helpSigns}}" wx:key="*this" class="li">
+          <view class="dot" style="background:#D64545"></view><text>{{item}}</text>
+        </view>
+      </view>
+      <view wx:for="{{helpPaths}}" wx:key="title" class="card col" style="gap:8rpx">
+        <view class="mut">{{item.step}}</view>
+        <view class="h">{{item.title}}</view>
+        <view class="sub">{{item.desc}}</view>
+      </view>
+      <button class="btn" bindtap="callHelp">拨打 12356 心理援助热线</button>
+      <view class="mut center">求助不是软弱，而是康复的一部分。</view>
+    </view>
+  </scroll-view>
+</view>

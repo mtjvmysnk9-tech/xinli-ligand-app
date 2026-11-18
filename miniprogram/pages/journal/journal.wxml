@@ -1,0 +1,50 @@
+<view class="page">
+  <view class="card col">
+    <view class="sub" style="font-weight:700;color:#22333B">今天的心情</view>
+    <view class="moods">
+      <button wx:for="{{moods}}" wx:key="label" class="mood {{mood === index ? 'sel' : ''}}" style="color:{{item.color}}" data-i="{{index}}" bindtap="onMood">
+        <view class="face" style="border-color:{{item.color}}"></view>
+        <text style="color:#8A9BA3">{{item.label}}</text>
+      </button>
+    </view>
+    <view class="col" style="gap:8rpx">
+      <view class="between"><text class="sub">担忧程度</text><text class="sub" style="color:#E9A23B;font-weight:700">{{worry}}</text></view>
+      <slider min="0" max="10" value="{{worry}}" activeColor="#E9A23B" backgroundColor="#EFECE4" block-size="20" bindchanging="onWorry" bindchange="onWorry"/>
+    </view>
+    <view class="col" style="gap:8rpx">
+      <view class="between"><text class="sub">重返运动的信心</text><text class="sub" style="color:#3BA55D;font-weight:700">{{confidence}}</text></view>
+      <slider min="0" max="10" value="{{confidence}}" activeColor="#3BA55D" backgroundColor="#EFECE4" block-size="20" bindchanging="onConfidence" bindchange="onConfidence"/>
+    </view>
+    <textarea class="note" value="{{note}}" maxlength="500" placeholder="今天想说的话（可选）：担心、进步、或任何小事…" bindinput="onNote"/>
+    <view class="between">
+      <text wx:if="{{saved}}" class="ok">已保存到本机</text><text wx:else class="mut">记录仅保存在本机</text>
+      <button class="btn" style="padding:16rpx 40rpx" bindtap="save">保存今天</button>
+    </view>
+  </view>
+
+  <view class="card col">
+    <view class="between">
+      <text class="sub" style="font-weight:700;color:#22333B">最近趋势</text>
+      <view class="row" style="gap:20rpx">
+        <view class="row" style="gap:8rpx"><view class="legend" style="background:#E9A23B"></view><text class="mut">担忧</text></view>
+        <view class="row" style="gap:8rpx"><view class="legend" style="background:#3BA55D"></view><text class="mut">信心</text></view>
+      </view>
+    </view>
+    <canvas type="2d" id="trend" class="trend"></canvas>
+  </view>
+
+  <view class="card col">
+    <view class="sub" style="font-weight:700;color:#22333B">历史记录</view>
+    <view wx:for="{{entries}}" wx:key="id" class="entry">
+      <view class="between">
+        <view class="row" style="gap:12rpx">
+          <text class="mut">{{item.date}}</text>
+          <text class="tag" style="color:{{item.moodColor}};border-color:{{item.moodColor}}">{{item.moodLabel}}</text>
+        </view>
+        <button class="mut" data-id="{{item.id}}" bindtap="del">删除</button>
+      </view>
+      <view class="mut">担忧 {{item.worry}} · 信心 {{item.confidence}}</view>
+      <view wx:if="{{item.note}}" class="sub">{{item.note}}</view>
+    </view>
+  </view>
+</view>

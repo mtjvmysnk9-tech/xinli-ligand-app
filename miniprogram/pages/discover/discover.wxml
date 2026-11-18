@@ -1,0 +1,40 @@
+<view class="page">
+  <view class="chips">
+    <button class="chip {{disc === 'stories' ? 'on' : ''}}" data-k="stories" bindtap="onDisc">真实故事</button>
+    <button class="chip {{disc === 'videos' ? 'on' : ''}}" data-k="videos" bindtap="onDisc">视频短片</button>
+    <button class="chip {{disc === 'science' ? 'on' : ''}}" data-k="science" bindtap="onDisc">心理科普</button>
+  </view>
+
+  <block wx:if="{{disc === 'stories'}}">
+    <view class="mut">以下案例均整理自公开报道，来源附在文末。</view>
+    <button wx:for="{{stories}}" wx:key="id" class="card storybtn" data-id="{{item.id}}" bindtap="onStory">
+      <view class="mut">{{item.kind}}</view>
+      <view class="h">{{item.title}}</view>
+      <view class="mut">{{item.meta}}</view>
+      <view class="quote">{{item.quote}}</view>
+    </button>
+  </block>
+
+  <block wx:elif="{{disc === 'videos'}}">
+    <view class="mut">视频来自哔哩哔哩，版权归原作者所有。点击卡片复制链接，在浏览器或 B 站 App 中播放。</view>
+    <button wx:for="{{videos}}" wx:key="id" class="card storybtn" data-id="{{item.id}}" bindtap="onVideo">
+      <view class="row" style="gap:16rpx">
+        <view class="vbadge">播</view>
+        <view class="col" style="gap:4rpx;flex:1">
+          <view class="mut">视频 · {{item.dur}}</view>
+          <view class="h">{{item.title}}</view>
+          <view class="mut">UP 主：{{item.up}}</view>
+        </view>
+      </view>
+      <view class="sub">{{item.intro}}</view>
+    </button>
+  </block>
+
+  <block wx:else>
+    <button wx:for="{{articles}}" wx:key="id" class="card storybtn" data-id="{{item.id}}" bindtap="onArticle">
+      <view class="h">{{item.title}}</view>
+      <view class="sub">{{item.intro}}</view>
+    </button>
+    <view class="mut">科普内容仅供参考，不能替代专业评估；具体康复请遵医嘱。</view>
+  </block>
+</view>

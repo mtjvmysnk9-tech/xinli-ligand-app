@@ -1,0 +1,5 @@
+.logo { width: 80rpx; height: 80rpx; position: relative; flex: 0 0 80rpx; }
+.logo-dot { position: absolute; width: 20rpx; height: 20rpx; border-radius: 999rpx; border: 5rpx solid #2F9E8F; }
+.logo-dot.a { left: 4rpx; top: 2rpx; }
+.logo-dot.b { right: 4rpx; bottom: 2rpx; }
+.logo-link { position: absolute; left: 22rpx; top: 22rpx; width: 36rpx; height: 36rpx; border-left: 6rpx solid #2F9E8F; border-bottom: 6rpx solid #2F9E8F; border-radius: 0 0 0 30rpx; transform: rotate(-45deg); }
